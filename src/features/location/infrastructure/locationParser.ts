@@ -11,6 +11,19 @@ interface NominatimEntry {
   address?: Record<string, string>;
 }
 
+function inferContinentFromCoordinates(lat: number, lon: number): string {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return "";
+  if (lat <= -60) return "Antarctica";
+  if (lat >= 5 && lat <= 82 && lon >= -170 && lon <= -20) return "North America";
+  if (lat <= 15 && lat >= -60 && lon >= -92 && lon <= -30) return "South America";
+  if (lat >= 35 && lon >= -25 && lon <= 60) return "Europe";
+  if (lat >= -35 && lat <= 37 && lon >= -20 && lon <= 55) return "Africa";
+  if (lat >= -10 && lon >= 110 && lon <= 180) return "Oceania";
+  if (lat >= -50 && lon >= 110 && lon <= 180) return "Oceania";
+  if (lon >= 25 && lon <= 180) return "Asia";
+  return "";
+}
+
 function pickFirstAddressValue(
   address: Record<string, string>,
   keys: string[],
@@ -59,12 +72,18 @@ export function normalizeLocationResult(
   const country =
     pickFirstAddressValue(address, ["country"]) ||
     String(entry.country ?? "").trim();
+  const countryCode = pickFirstAddressValue(address, ["country_code"]).toUpperCase();
+  const continent =
+    pickFirstAddressValue(address, ["continent"]) ||
+    inferContinentFromCoordinates(lat, lon);
 
   return {
     id: String(entry.place_id ?? label),
     label,
     city,
     country,
+    countryCode,
+    continent,
     lat,
     lon,
   };

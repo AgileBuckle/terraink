@@ -16,6 +16,7 @@ export interface ExportOptions {
   heightInches: number;
   displayCity: string;
   displayCountry: string;
+  displayContinent?: string;
   fontFamily: string;
   showPosterText: boolean;
   includeCredits?: boolean;
@@ -24,6 +25,7 @@ export interface ExportOptions {
 export interface Typography {
   displayCity: string;
   displayCountry: string;
+  displayContinent?: string;
   fontFamily: string;
   showPosterText: boolean;
   includeCredits?: boolean;

@@ -36,6 +36,8 @@ const EDIT_HINT_ACTIVE =
 const EDIT_HINT_MOVE_OFF =
   "Move mode is off. Enable the move button to drag/scroll, or use +/- buttons and keyboard (+/- and arrow keys).";
 const RECENTER_HINT = "Recenter map to the current location";
+const COUNTRY_VIEW_ZOOM_LEVEL = 10;
+const CONTINENT_VIEW_ZOOM_LEVEL = 6;
 
 export default function PreviewPanel() {
   const { state, effectiveTheme, mapStyle, mapRef } = usePosterContext();
@@ -45,6 +47,7 @@ export default function PreviewPanel() {
     mapZoom,
     mapMinZoom,
     mapMaxZoom,
+    handleMove,
     handleMoveEnd,
     setContainerWidth,
   } = useMapSync();
@@ -80,6 +83,19 @@ export default function PreviewPanel() {
 
   const formLat = Number(form.latitude) || 0;
   const formLon = Number(form.longitude) || 0;
+  const isCityCountryView = mapZoom >= COUNTRY_VIEW_ZOOM_LEVEL;
+  const isCountryContinentView =
+    mapZoom >= CONTINENT_VIEW_ZOOM_LEVEL && mapZoom < COUNTRY_VIEW_ZOOM_LEVEL;
+  const cityLabel = isCityCountryView
+    ? form.displayCity || form.location || "Hanover"
+    : isCountryContinentView
+      ? form.displayCountry || "Germany"
+      : form.displayContinent || "Earth";
+  const countryLabel = isCityCountryView
+    ? form.displayCountry || "Germany"
+    : isCountryContinentView
+      ? form.displayContinent || "Europe"
+      : "Earth";
 
   const handleStartEditing = useCallback(() => {
     setIsEditing(true);
@@ -150,14 +166,13 @@ export default function PreviewPanel() {
             minZoom={mapMinZoom}
             maxZoom={mapMaxZoom}
             overzoomScale={MAP_OVERZOOM_SCALE}
+            onMove={handleMove}
             onMoveEnd={handleMoveEnd}
           />
-          <GradientFades
-            color={effectiveTheme.ui.bg}
-          />
+          <GradientFades color={effectiveTheme.ui.bg} />
           <PosterTextOverlay
-            city={form.displayCity || form.location || "Your City"}
-            country={form.displayCountry || ""}
+            city={cityLabel}
+            country={countryLabel}
             lat={formLat}
             lon={formLon}
             fontFamily={form.fontFamily}

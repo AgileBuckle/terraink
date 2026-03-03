@@ -17,6 +17,7 @@ const nominatim = createNominatimAdapter(fetchAdapter, localStorageCache);
 
 export const searchLocations = nominatim.searchLocations;
 export const geocodeLocation = nominatim.geocodeLocation;
+export const reverseGeocodeCoordinates = nominatim.reverseGeocode;
 
 /* ── Fonts ── */
 

@@ -13,6 +13,7 @@ import {
 import {
   getGeocodeCacheKey,
   getLocationSearchCacheKey,
+  getReverseGeocodeCacheKey,
 } from "@/features/map/infrastructure/cacheKeys";
 
 export function createNominatimAdapter(
@@ -94,5 +95,40 @@ export function createNominatimAdapter(
     };
   }
 
-  return { searchLocations, geocodeLocation, geocodeCity };
+  async function reverseGeocode(lat: number, lon: number): Promise<SearchResult> {
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      throw new Error("Latitude and longitude are required.");
+    }
+
+    const cacheKey = getReverseGeocodeCacheKey(lat, lon);
+    const cached = cache.read<Record<string, unknown>>(cacheKey, GEOCODE_TTL_MS);
+    if (cached && typeof cached === "object") {
+      const normalizedCached = normalizeLocationResult(cached as any);
+      if (normalizedCached) {
+        return normalizedCached;
+      }
+    }
+
+    const url =
+      "https://nominatim.openstreetmap.org/reverse?" +
+      `format=jsonv2&addressdetails=1&zoom=10&lat=${encodeURIComponent(String(lat))}&lon=${encodeURIComponent(String(lon))}`;
+
+    const response = await http.get(
+      url,
+      {
+        headers: { Accept: "application/json" },
+      },
+      16_000,
+    );
+
+    const data = await response.json();
+    const normalized = normalizeLocationResult(data);
+    if (!normalized) {
+      throw new Error("No nearby city found for the selected coordinates.");
+    }
+    cache.write(cacheKey, normalized);
+    return normalized;
+  }
+
+  return { searchLocations, geocodeLocation, reverseGeocode, geocodeCity };
 }

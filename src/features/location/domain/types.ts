@@ -3,6 +3,8 @@ export interface Location {
   label: string;
   city: string;
   country: string;
+  countryCode?: string;
+  continent?: string;
   lat: number;
   lon: number;
 }

@@ -14,6 +14,7 @@ export interface PosterForm {
   layout: string;
   displayCity: string;
   displayCountry: string;
+  displayContinent: string;
   fontFamily: string;
   showPosterText: boolean;
   includeCredits: boolean;
@@ -64,6 +65,7 @@ export function posterReducer(
         const parts = parseLocationParts(action.value);
         nextForm.displayCity = parts.city;
         nextForm.displayCountry = parts.country;
+        nextForm.displayContinent = "";
       }
 
       return {
@@ -121,6 +123,7 @@ export function posterReducer(
           longitude: action.location.lon.toFixed(6),
           displayCity: action.location.city,
           displayCountry: action.location.country,
+          displayContinent: action.location.continent || "",
         },
       };
 
@@ -133,6 +136,7 @@ export function posterReducer(
           location: "",
           displayCity: "",
           displayCountry: "",
+          displayContinent: "",
         },
       };
 

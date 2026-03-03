@@ -42,9 +42,11 @@ const defaultLayoutWidthCm = Number(
 const defaultLayoutHeightCm = Number(
   defaultLayoutOption?.heightCm ?? DEFAULT_POSTER_HEIGHT_CM,
 );
+const DEFAULT_LOCATION_LABEL =
+  "Hanover, Region Hannover, Lower Saxony, Germany";
 
 export const DEFAULT_FORM: PosterForm = {
-  location: "",
+  location: DEFAULT_LOCATION_LABEL,
   latitude: DEFAULT_LAT.toFixed(6),
   longitude: DEFAULT_LON.toFixed(6),
   distance: String(DEFAULT_DISTANCE_METERS),
@@ -52,8 +54,9 @@ export const DEFAULT_FORM: PosterForm = {
   height: String(defaultLayoutHeightCm),
   theme: defaultThemeName,
   layout: defaultLayoutId,
-  displayCity: "",
-  displayCountry: "",
+  displayCity: "Hanover",
+  displayCountry: "Germany",
+  displayContinent: "Europe",
   fontFamily: "",
   showPosterText: true,
   includeCredits: true,

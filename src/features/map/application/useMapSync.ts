@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
 import { clamp } from "@/shared/geo/math";
+import { reverseGeocodeCoordinates } from "@/core/services";
 import {
   MIN_DISTANCE_METERS,
   MAX_DISTANCE_METERS,
@@ -79,6 +80,8 @@ function resolveZoomBounds(
 export function useMapSync() {
   const { state, dispatch, mapRef } = usePosterContext();
   const { form } = state;
+  const lastLocationLookupAtRef = useRef(0);
+  const lastLookupCoordsRef = useRef<[number, number] | null>(null);
 
   const [containerPx, setContainerPx] = useState(DEFAULT_CONTAINER_PX);
   const effectiveContainerPx = containerPx * MAP_OVERZOOM_SCALE;
@@ -118,6 +121,60 @@ export function useMapSync() {
     [formDistance, formLat, effectiveContainerPx, mapZoomBounds],
   );
 
+  const updateLocationFromCoordinates = useCallback(
+    (lat: number, lon: number) => {
+      const now = Date.now();
+      const previous = lastLookupCoordsRef.current;
+      const movedEnough =
+        !previous ||
+        Math.abs(previous[0] - lat) >= 0.002 ||
+        Math.abs(previous[1] - lon) >= 0.002;
+      const canLookup = now - lastLocationLookupAtRef.current >= 900;
+      if (!movedEnough || !canLookup) {
+        return;
+      }
+
+      lastLookupCoordsRef.current = [lat, lon];
+      lastLocationLookupAtRef.current = now;
+
+      void reverseGeocodeCoordinates(lat, lon)
+        .then((nearest) => {
+          const fallbackLabel = String(nearest.label ?? "").trim();
+          const nextCity = String(nearest.city ?? "").trim();
+          const nextCountry = String(nearest.country ?? "").trim();
+          const nextContinent = String(nearest.continent ?? "").trim();
+          const nextLocation =
+            [nextCity, nextCountry].filter(Boolean).join(", ") || fallbackLabel;
+
+          if (!nextLocation) {
+            return;
+          }
+
+          dispatch({
+            type: "SET_FORM_FIELDS",
+            fields: {
+              location: nextLocation,
+              displayCity: nextCity,
+              displayCountry: nextCountry,
+              displayContinent: nextContinent,
+            },
+          });
+        })
+        .catch(() => {
+          // Ignore lookup failures; coordinates stay authoritative.
+        });
+    },
+    [dispatch],
+  );
+
+  const handleMove = useCallback(
+    (center: [number, number]) => {
+      const [lon, lat] = center;
+      updateLocationFromCoordinates(lat, lon);
+    },
+    [updateLocationFromCoordinates],
+  );
+
   const handleMoveEnd = useCallback(
     (center: [number, number], zoom: number) => {
       const [lon, lat] = center;
@@ -133,8 +190,10 @@ export function useMapSync() {
           distance: String(Math.round(distance)),
         },
       });
+
+      updateLocationFromCoordinates(lat, lon);
     },
-    [dispatch, effectiveContainerPx],
+    [dispatch, effectiveContainerPx, updateLocationFromCoordinates],
   );
 
   const flyToLocation = useCallback(
@@ -163,6 +222,7 @@ export function useMapSync() {
     mapZoom,
     mapMinZoom: mapZoomBounds.minZoom,
     mapMaxZoom: mapZoomBounds.maxZoom,
+    handleMove,
     handleMoveEnd,
     flyToLocation,
     setContainerWidth,

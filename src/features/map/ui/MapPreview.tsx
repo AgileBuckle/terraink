@@ -17,6 +17,7 @@ interface MapPreviewProps {
   minZoom?: number;
   maxZoom?: number;
   onMoveEnd?: (center: [number, number], zoom: number) => void;
+  onMove?: (center: [number, number], zoom: number) => void;
   containerStyle?: CSSProperties;
   overzoomScale?: number;
 }
@@ -37,6 +38,7 @@ export default function MapPreview({
   minZoom,
   maxZoom,
   onMoveEnd,
+  onMove,
   containerStyle,
   overzoomScale = 1,
 }: MapPreviewProps) {
@@ -44,7 +46,9 @@ export default function MapPreview({
   const isSyncing = useRef(false);
   const hasMountedStyleRef = useRef(false);
   const onMoveEndRef = useRef(onMoveEnd);
+  const onMoveRef = useRef(onMove);
   onMoveEndRef.current = onMoveEnd;
+  onMoveRef.current = onMove;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -65,6 +69,11 @@ export default function MapPreview({
       if (isSyncing.current) return;
       const currentCenter = map.getCenter();
       onMoveEndRef.current?.([currentCenter.lng, currentCenter.lat], map.getZoom());
+    });
+    map.on("move", () => {
+      if (isSyncing.current) return;
+      const currentCenter = map.getCenter();
+      onMoveRef.current?.([currentCenter.lng, currentCenter.lat], map.getZoom());
     });
 
     return () => {
