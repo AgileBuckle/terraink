@@ -6,6 +6,7 @@ import { resolveCanvasSize } from "@/features/poster/infrastructure/renderer/can
 import { getAllMarkerIcons } from "@/features/markers/infrastructure/iconRegistry";
 import { ensureGoogleFont } from "@/core/services";
 import {
+  createPngBlob,
   createPdfBlobFromCanvas,
   createPosterFilename,
   triggerDownloadBlob,
@@ -49,10 +50,11 @@ export function useExport() {
 
         const widthCm = Number(form.width) || DEFAULT_POSTER_WIDTH_CM;
         const heightCm = Number(form.height) || DEFAULT_POSTER_HEIGHT_CM;
+        const dpi = Number(form.dpi) || 300;
         const widthInches = widthCm / CM_PER_INCH;
         const heightInches = heightCm / CM_PER_INCH;
 
-        const size = resolveCanvasSize(widthInches, heightInches);
+        const size = resolveCanvasSize(widthInches, heightInches, dpi);
 
         // 1. Capture map at full export resolution
         const { canvas: mapCanvas, markerProjection, markerScaleX, markerScaleY } =
@@ -99,10 +101,8 @@ export function useExport() {
           });
           triggerDownloadBlob(pdfBlob, filename);
         } else {
-          const blob = await new Promise<Blob | null>((resolve) =>
-            canvas.toBlob((b) => resolve(b), "image/png"),
-          );
-          if (blob) triggerDownloadBlob(blob, filename);
+          const pngBlob = await createPngBlob(canvas, dpi);
+          triggerDownloadBlob(pngBlob, filename);
         }
 
         dispatch({ type: "FINISH_EXPORT" });
