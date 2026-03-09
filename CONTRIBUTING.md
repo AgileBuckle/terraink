@@ -48,11 +48,11 @@ The repository follows a linear promotion model:
 dev -> beta -> main
 ```
 
-| Branch | Purpose |
-| --- | --- |
-| `dev` | Active development. All feature branches are created from here and all external PRs target this branch first. |
+| Branch | Purpose                                                                                                       |
+| ------ | ------------------------------------------------------------------------------------------------------------- |
+| `dev`  | Active development. All feature branches are created from here and all external PRs target this branch first. |
 | `beta` | Staging or pre-release testing. Changes are promoted here from `dev` when they are ready for broader testing. |
-| `main` | Production. Changes reach this branch only after they were verified in `beta`. |
+| `main` | Production. Changes reach this branch only after they were verified in `beta`.                                |
 
 Always branch from `dev` and always open your pull request against `dev`.
 
@@ -89,17 +89,17 @@ Follow the emoji-style Conventional Commits format used in this repo. See [`.vsc
 
 Common types:
 
-| Emoji | Type | When to use |
-| --- | --- | --- |
-| `✨` | `feat` | New feature |
-| `🐛` | `fix` | Bug fix |
-| `♻️` | `refactor` | Code restructure without behavior change |
-| `🖌️` | `ui` | UI-only changes with no logic changes |
-| `📚` | `docs` | Documentation only |
-| `🔧` | `chore` | Maintenance, tooling, or dependencies |
-| `🎨` | `style` | Formatting-only changes |
-| `⚡` | `perf` | Performance improvements |
-| `🗑️` | `del` | Remove files or code |
+| Emoji | Type       | When to use                              |
+| ----- | ---------- | ---------------------------------------- |
+| `✨`  | `feat`     | New feature                              |
+| `🐛`  | `fix`      | Bug fix                                  |
+| `♻️`  | `refactor` | Code restructure without behavior change |
+| `🖌️`  | `ui`       | UI-only changes with no logic changes    |
+| `📚`  | `docs`     | Documentation only                       |
+| `🔧`  | `chore`    | Maintenance, tooling, or dependencies    |
+| `🎨`  | `style`    | Formatting-only changes                  |
+| `⚡`  | `perf`     | Performance improvements                 |
+| `🗑️`  | `del`      | Remove files or code                     |
 
 Rules:
 
@@ -141,3 +141,7 @@ AI-assisted coding is allowed. Vibe-coded submissions are not.
 - Make sure generated code follows the project architecture, naming, and modularity standards.
 - Do not submit generated output that still contains hard-coded assumptions, weak abstractions, or incomplete UX requirements.
 - If a maintainer asks for a specific engineering direction, implement that direction intentionally instead of pasting agent output with minimal changes.
+
+## Contributor License Agreement (CLA)
+
+This project does not currently require a Contributor License Agreement (CLA). By submitting a pull request, you agree that your contribution is licensed under the same MIT License as the project. The project owner reserves the right to relicense or redistribute the project and its derivatives in the future, while preserving contributor attribution.

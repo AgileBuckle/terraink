@@ -133,3 +133,13 @@ Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=yousifamanuel/terraink&type=Date)](https://star-history.com/#yousifamanuel/terraink&Date)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Trademark
+
+The **Terraink™** name, logo, and branding assets are trademarks of the project owner.</br>
+The MIT license grants you the right to use the code, but it does **not** grant any rights to use the project's name or branding for your own commercial purposes or hosted services.</br>
+See [TRADEMARK.md](./TRADEMARK.md) for details.
