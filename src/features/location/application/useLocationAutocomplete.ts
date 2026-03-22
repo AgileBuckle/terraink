@@ -8,6 +8,8 @@ interface UseLocationAutocompleteReturn {
   clearLocationSuggestions: () => void;
 }
 
+const DEBOUNCE_DELAY_MS = 1000;
+
 export function useLocationAutocomplete(
   locationInput: string,
   isFocused: boolean,
@@ -42,7 +44,7 @@ export function useLocationAutocomplete(
           setIsLocationSearching(false);
         }
       }
-    }, 220);
+    }, DEBOUNCE_DELAY_MS);
 
     return () => {
       cancelled = true;
