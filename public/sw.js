@@ -1,4 +1,6 @@
 const CACHE_NAME = "terraink-static-v2";
+const TILE_CACHE_NAME = "terraink-tiles-v1";
+const TILE_ORIGINS = ["https://tiles.openfreemap.org"];
 const APP_SHELL_ASSETS = [
   "/",
   "/index.html",
@@ -36,7 +38,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key !== CACHE_NAME)
+            .filter((key) => key !== CACHE_NAME && key !== TILE_CACHE_NAME)
             .map((key) => caches.delete(key)),
         ),
       ),
@@ -51,6 +53,24 @@ self.addEventListener("fetch", (event) => {
   }
 
   const url = new URL(request.url);
+
+  if (TILE_ORIGINS.some((origin) => url.origin === origin)) {
+    event.respondWith(
+      caches.open(TILE_CACHE_NAME).then((cache) =>
+        cache.match(request).then((cached) => {
+          if (cached) return cached;
+          return fetch(request).then((response) => {
+            if (response.ok) {
+              cache.put(request, response.clone());
+            }
+            return response;
+          });
+        }),
+      ),
+    );
+    return;
+  }
+
   if (url.origin !== self.location.origin) {
     return;
   }

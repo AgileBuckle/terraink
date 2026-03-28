@@ -288,111 +288,96 @@ export function generateMapStyle(
 
       // Parks are drawn before water so that marine protected areas / ocean parks
       // are always covered by the water layer and don't bleed the parks color onto oceans.
-      ...(includeParks
-        ? [
-            {
-              id: "park",
-              source: SOURCE_ID,
-              "source-layer": "park",
-              type: "fill" as const,
-              paint: { "fill-color": theme.map.parks },
-            },
-          ]
-        : []),
+      {
+        id: "park",
+        source: SOURCE_ID,
+        "source-layer": "park",
+        type: "fill" as const,
+        layout: { visibility: includeParks ? ("visible" as const) : ("none" as const) },
+        paint: { "fill-color": theme.map.parks },
+      },
 
-      ...(includeWater
-        ? [
-            {
-              id: "water",
-              source: SOURCE_ID,
-              "source-layer": "water",
-              type: "fill" as const,
-              paint: { "fill-color": theme.map.water },
-            },
-            {
-              id: "waterway",
-              source: SOURCE_ID,
-              "source-layer": "waterway",
-              type: "line" as const,
-              filter: lineClassFilter(["river", "canal", "stream", "ditch"]),
-              paint: {
-                "line-color": theme.map.waterway,
-                "line-width": widthExpr(waterwayWidthStops),
-              },
-              layout: {
-                "line-cap": "round",
-                "line-join": "round",
-              },
-            },
-          ]
-        : []),
+      {
+        id: "water",
+        source: SOURCE_ID,
+        "source-layer": "water",
+        type: "fill" as const,
+        layout: { visibility: includeWater ? ("visible" as const) : ("none" as const) },
+        paint: { "fill-color": theme.map.water },
+      },
+      {
+        id: "waterway",
+        source: SOURCE_ID,
+        "source-layer": "waterway",
+        type: "line" as const,
+        filter: lineClassFilter(["river", "canal", "stream", "ditch"]),
+        paint: {
+          "line-color": theme.map.waterway,
+          "line-width": widthExpr(waterwayWidthStops),
+        },
+        layout: {
+          visibility: includeWater ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
+        },
+      },
 
-      ...(includeAeroway
-        ? [
-            {
-              id: "aeroway",
-              source: SOURCE_ID,
-              "source-layer": "aeroway",
-              type: "fill" as const,
-              filter: [
-                "match",
-                ["geometry-type"],
-                ["MultiPolygon", "Polygon"],
-                true,
-                false,
-              ],
-              paint: {
-                "fill-color": theme.map.aeroway,
-                "fill-opacity": 0.85,
-              },
-            },
-          ]
-        : []),
+      {
+        id: "aeroway",
+        source: SOURCE_ID,
+        "source-layer": "aeroway",
+        type: "fill" as const,
+        filter: [
+          "match",
+          ["geometry-type"],
+          ["MultiPolygon", "Polygon"],
+          true,
+          false,
+        ],
+        layout: { visibility: includeAeroway ? ("visible" as const) : ("none" as const) },
+        paint: {
+          "fill-color": theme.map.aeroway,
+          "fill-opacity": 0.85,
+        },
+      },
 
-      ...(includeBuildings
-        ? [
-            {
-              id: "building",
-              source: SOURCE_ID,
-              "source-layer": "building",
-              type: "fill" as const,
-              minzoom: buildingMinZoom,
-              paint: {
-                "fill-color": buildingFill,
-                "fill-opacity": BUILDING_FILL_OPACITY,
-              },
-            },
-          ]
-        : []),
+      {
+        id: "building",
+        source: SOURCE_ID,
+        "source-layer": "building",
+        type: "fill" as const,
+        minzoom: buildingMinZoom,
+        layout: { visibility: includeBuildings ? ("visible" as const) : ("none" as const) },
+        paint: {
+          "fill-color": buildingFill,
+          "fill-opacity": BUILDING_FILL_OPACITY,
+        },
+      },
 
-      ...(includeRail
-        ? [
-            {
-              id: "rail",
-              source: SOURCE_ID,
-              "source-layer": "transportation",
-              type: "line" as const,
-              filter: lineClassFilter(MAP_RAIL_CLASSES),
-              paint: {
-                "line-color": theme.map.rail,
-                "line-width": widthExpr(railWidthStops),
-                "line-opacity": opacityExpr([
-                  [0, 0.56],
-                  [12, 0.62],
-                  [18, 0.72],
-                ]),
-                "line-dasharray": [2, 1.6],
-              },
-              layout: {
-                "line-cap": "round",
-                "line-join": "round",
-              },
-            },
-          ]
-        : []),
+      {
+        id: "rail",
+        source: SOURCE_ID,
+        "source-layer": "transportation",
+        type: "line" as const,
+        filter: lineClassFilter(MAP_RAIL_CLASSES),
+        paint: {
+          "line-color": theme.map.rail,
+          "line-width": widthExpr(railWidthStops),
+          "line-opacity": opacityExpr([
+            [0, 0.56],
+            [12, 0.62],
+            [18, 0.72],
+          ]),
+          "line-dasharray": [2, 1.6],
+        },
+        layout: {
+          visibility: includeRail ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
+        },
+      },
 
-      ...(includeRoads
-        ? [{
+      {
         id: "road-minor-overview-high",
         source: SOURCE_ID,
         "source-layer": "transportation",
@@ -410,8 +395,9 @@ export function generateMapStyle(
           ]),
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -432,8 +418,9 @@ export function generateMapStyle(
           ]),
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -456,8 +443,9 @@ export function generateMapStyle(
             : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -480,8 +468,9 @@ export function generateMapStyle(
             : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
 
@@ -497,8 +486,9 @@ export function generateMapStyle(
           "line-opacity": includeRoadOutline ? 0.95 : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -520,8 +510,9 @@ export function generateMapStyle(
             : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -543,8 +534,9 @@ export function generateMapStyle(
             : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -566,8 +558,9 @@ export function generateMapStyle(
             : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
 
@@ -582,8 +575,9 @@ export function generateMapStyle(
           "line-width": widthExpr(roadMajorWidthStops),
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -603,8 +597,9 @@ export function generateMapStyle(
           ]),
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -624,8 +619,9 @@ export function generateMapStyle(
           ]),
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -647,8 +643,9 @@ export function generateMapStyle(
             : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
       },
       {
@@ -670,11 +667,11 @@ export function generateMapStyle(
             : 0,
         },
         layout: {
-          "line-cap": "round",
-          "line-join": "round",
+          visibility: includeRoads ? ("visible" as const) : ("none" as const),
+          "line-cap": "round" as const,
+          "line-join": "round" as const,
         },
-      }]
-        : []),
+      },
     ],
   };
 }

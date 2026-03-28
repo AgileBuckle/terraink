@@ -1,12 +1,74 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import maplibregl from "maplibre-gl";
-import type { StyleSpecification } from "maplibre-gl";
+import type { LayerSpecification, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { MapInstanceRef } from "@/features/map/domain/types";
 import {
   MAP_CENTER_SYNC_EPSILON,
   MAP_ZOOM_SYNC_EPSILON,
 } from "@/features/map/infrastructure";
+
+/**
+ * Apply style changes incrementally via setPaintProperty / setLayoutProperty
+ * instead of calling setStyle() which triggers a full style diff.
+ */
+function applyIncrementalStyleUpdate(
+  map: maplibregl.Map,
+  prev: StyleSpecification,
+  next: StyleSpecification,
+): void {
+  const prevLayerMap = new Map(
+    prev.layers.map((l) => [l.id, l] as [string, LayerSpecification]),
+  );
+
+  for (const layer of next.layers) {
+    const prevLayer = prevLayerMap.get(layer.id);
+    if (!prevLayer) continue;
+
+    // Diff paint properties
+    const nextPaint = (layer as Record<string, unknown>).paint as
+      | Record<string, unknown>
+      | undefined;
+    const prevPaint = (prevLayer as Record<string, unknown>).paint as
+      | Record<string, unknown>
+      | undefined;
+    if (nextPaint) {
+      for (const key of Object.keys(nextPaint)) {
+        if (JSON.stringify(nextPaint[key]) !== JSON.stringify(prevPaint?.[key])) {
+          map.setPaintProperty(layer.id, key, nextPaint[key]);
+        }
+      }
+    }
+
+    // Diff layout properties
+    const nextLayout = (layer as Record<string, unknown>).layout as
+      | Record<string, unknown>
+      | undefined;
+    const prevLayout = (prevLayer as Record<string, unknown>).layout as
+      | Record<string, unknown>
+      | undefined;
+    if (nextLayout) {
+      for (const key of Object.keys(nextLayout)) {
+        if (
+          JSON.stringify(nextLayout[key]) !== JSON.stringify(prevLayout?.[key])
+        ) {
+          map.setLayoutProperty(layer.id, key, nextLayout[key]);
+        }
+      }
+    }
+
+    // Diff minzoom / maxzoom
+    const nextAny = layer as Record<string, unknown>;
+    const prevAny = prevLayer as Record<string, unknown>;
+    if (nextAny.minzoom !== prevAny.minzoom || nextAny.maxzoom !== prevAny.maxzoom) {
+      map.setLayerZoomRange(
+        layer.id,
+        (nextAny.minzoom as number) ?? 0,
+        (nextAny.maxzoom as number) ?? 24,
+      );
+    }
+  }
+}
 
 interface MapPreviewProps {
   style: StyleSpecification;
@@ -47,6 +109,7 @@ export default function MapPreview({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isSyncing = useRef(false);
   const hasMountedStyleRef = useRef(false);
+  const prevStyleRef = useRef<StyleSpecification | null>(null);
   const onMoveEndRef = useRef(onMoveEnd);
   const onMoveRef = useRef(onMove);
   onMoveEndRef.current = onMoveEnd;
@@ -130,26 +193,38 @@ export default function MapPreview({
     const map = mapRef.current;
     if (!map) return;
 
-    // Initial style is already provided in map constructor.
-    // Skip the first effect pass to avoid "Style is not done loading" diffs.
+    // Initial style is already provided in map constructor — record it and skip.
     if (!hasMountedStyleRef.current) {
       hasMountedStyleRef.current = true;
+      prevStyleRef.current = style;
       return;
     }
 
-    if (map.isStyleLoaded()) {
-      map.setStyle(style);
-      return;
+    // If the map hasn't finished loading the initial style yet, queue a full setStyle.
+    if (!map.isStyleLoaded()) {
+      const applyWhenReady = () => {
+        map.setStyle(style);
+        prevStyleRef.current = style;
+      };
+      map.once("load", applyWhenReady);
+      return () => {
+        map.off("load", applyWhenReady);
+      };
     }
 
-    const applyStyleWhenReady = () => {
+    // Fast path: apply only the changed paint/layout/zoom properties directly,
+    // avoiding a full setStyle diff and any risk of source re-initialisation.
+    if (
+      prevStyleRef.current &&
+      JSON.stringify(prevStyleRef.current.sources) ===
+        JSON.stringify(style.sources)
+    ) {
+      applyIncrementalStyleUpdate(map, prevStyleRef.current, style);
+    } else {
       map.setStyle(style);
-    };
+    }
 
-    map.once("load", applyStyleWhenReady);
-    return () => {
-      map.off("load", applyStyleWhenReady);
-    };
+    prevStyleRef.current = style;
   }, [style, mapRef]);
 
   useEffect(() => {

@@ -71,8 +71,7 @@ export default function PreviewPanel() {
   } = useMapSync();
 
   const frameRef = useRef<HTMLDivElement | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ghostMapRef = useRef<any>(null);
+  const ghostCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [mapBearing, setMapBearing] = useState(0);
   const [isRotationEnabled, setIsRotationEnabled] = useState(false);
@@ -129,33 +128,30 @@ export default function PreviewPanel() {
   }, [mapRef]);
 
   useEffect(() => {
-    const sourceMap = mapRef.current;
-    const ghostMap = ghostMapRef.current;
-    if (!sourceMap || !ghostMap) return;
+    const map = mapRef.current;
+    if (!map) return;
 
-    const syncGhostViewport = () => {
-      const center = sourceMap.getCenter();
-      ghostMap.jumpTo({
-        center: [center.lng, center.lat],
-        zoom: sourceMap.getZoom(),
-        bearing: sourceMap.getBearing(),
-        pitch: sourceMap.getPitch(),
-      });
+    const syncGhostCanvas = () => {
+      const ghost = ghostCanvasRef.current;
+      if (!ghost) return;
+      const src = map.getCanvas();
+      if (!src) return;
+
+      if (ghost.width !== src.width || ghost.height !== src.height) {
+        ghost.width = src.width;
+        ghost.height = src.height;
+      }
+
+      const ctx = ghost.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(src, 0, 0);
     };
 
-    syncGhostViewport();
-    sourceMap.on("move", syncGhostViewport);
-    sourceMap.on("zoom", syncGhostViewport);
-    sourceMap.on("rotate", syncGhostViewport);
-    sourceMap.on("pitch", syncGhostViewport);
-
+    map.on("render", syncGhostCanvas);
     return () => {
-      sourceMap.off("move", syncGhostViewport);
-      sourceMap.off("zoom", syncGhostViewport);
-      sourceMap.off("rotate", syncGhostViewport);
-      sourceMap.off("pitch", syncGhostViewport);
+      map.off("render", syncGhostCanvas);
     };
-  }, [mapRef, mapStyle]);
+  }, [mapRef]);
 
   useEffect(() => {
     if (!isMarkerEditorActive) {
@@ -380,19 +376,23 @@ export default function PreviewPanel() {
   return (
     <section className="preview-panel">
       <div className="poster-viewport">
-        {/* Desktop ghost map: full-bleed map behind the poster frame at reduced opacity */}
+        {/* Desktop ghost layer: canvas clone of the main map at reduced opacity */}
         <div className="poster-ghost-layer" aria-hidden="true">
-          <MapPreview
-            style={mapStyle}
-            center={mapCenter}
-            zoom={mapZoom}
-            mapRef={ghostMapRef}
-            interactive={false}
-            allowRotation={false}
-            minZoom={mapMinZoom}
-            maxZoom={mapMaxZoom}
-            overzoomScale={MAP_OVERZOOM_SCALE}
-          />
+          <div style={{ overflow: "hidden", width: "100%", height: "100%" }}>
+            <div
+              style={{
+                width: `${MAP_OVERZOOM_SCALE * 100}%`,
+                height: `${MAP_OVERZOOM_SCALE * 100}%`,
+                transform: `scale(${1 / MAP_OVERZOOM_SCALE})`,
+                transformOrigin: "top left",
+              }}
+            >
+              <canvas
+                ref={ghostCanvasRef}
+                style={{ width: "100%", height: "100%", display: "block" }}
+              />
+            </div>
+          </div>
         </div>
         <div className="desktop-layout-label" aria-hidden="true">
           {layoutLabel}
