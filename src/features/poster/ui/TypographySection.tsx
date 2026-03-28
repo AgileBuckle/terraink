@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { ensureGoogleFont } from "@/core/services";
 import type { PosterForm } from "@/features/poster/application/posterReducer";
 import type { FontOption } from "@/core/config";
 import {
@@ -70,6 +71,14 @@ export default function TypographySection({
   onCreditsChange,
 }: TypographySectionProps) {
   const [includeCreditsModal, setIncludeCreditsModal] = useState(false);
+
+  useEffect(() => {
+    const families = fontOptions
+      .map((option) => String(option.value || "").trim())
+      .filter(Boolean);
+
+    void Promise.allSettled(families.map((family) => ensureGoogleFont(family)));
+  }, [fontOptions]);
 
   function handleCreditsToggle(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.checked) {
@@ -157,6 +166,11 @@ export default function TypographySection({
               <option
                 key={fontOption.value || "default"}
                 value={fontOption.value}
+                style={{
+                  fontFamily: fontOption.value
+                    ? `"${fontOption.value}", "Space Grotesk", sans-serif`
+                    : `"Space Grotesk", sans-serif`,
+                }}
               >
                 {fontOption.label}
               </option>
