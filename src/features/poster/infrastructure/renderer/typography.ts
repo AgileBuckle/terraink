@@ -8,16 +8,15 @@ import {
   TEXT_COUNTRY_Y_RATIO,
   TEXT_COORDS_Y_RATIO,
   TEXT_EDGE_MARGIN_RATIO,
-  CITY_TEXT_SHRINK_THRESHOLD,
   CITY_FONT_BASE_PX,
-  CITY_FONT_MIN_PX,
   COUNTRY_FONT_BASE_PX,
   COORDS_FONT_BASE_PX,
   ATTRIBUTION_FONT_BASE_PX,
   isLatinScript,
   formatCityLabel,
+  computeCityFontScale,
+  computeAttributionColor,
 } from "@/features/poster/domain/textLayout";
-import { parseHex } from "@/shared/utils/color";
 
 export function drawPosterText(
   ctx: CanvasRenderingContext2D,
@@ -34,15 +33,7 @@ export function drawPosterText(
 ): void {
   const textColor = theme.ui?.text || "#111111";
   const landColor = theme.map?.land || "#808080";
-  const landRgb = parseHex(landColor);
-  const landLuma = landRgb
-    ? (0.2126 * landRgb.r + 0.7152 * landRgb.g + 0.0722 * landRgb.b) / 255
-    : 0.5;
-  const attributionColor = showOverlay
-    ? textColor
-    : landLuma < 0.52
-      ? "#f5faff"
-      : "#0e1822";
+  const attributionColor = computeAttributionColor(textColor, landColor, showOverlay);
   const attributionAlpha = showOverlay ? 0.55 : 0.9;
   const titleFontFamily = fontFamily
     ? `"${fontFamily}", "Space Grotesk", sans-serif`
@@ -59,14 +50,7 @@ export function drawPosterText(
 
   if (showPosterText) {
     const cityLabel = formatCityLabel(city);
-    const cityLength = Math.max(city.length, 1);
-    let cityFontSize = CITY_FONT_BASE_PX * dimScale;
-    if (cityLength > CITY_TEXT_SHRINK_THRESHOLD) {
-      cityFontSize = Math.max(
-        CITY_FONT_MIN_PX * dimScale,
-        cityFontSize * (CITY_TEXT_SHRINK_THRESHOLD / cityLength),
-      );
-    }
+    const cityFontSize = CITY_FONT_BASE_PX * dimScale * computeCityFontScale(city);
 
     const countryFontSize = COUNTRY_FONT_BASE_PX * dimScale;
     const coordinateFontSize = COORDS_FONT_BASE_PX * dimScale;
