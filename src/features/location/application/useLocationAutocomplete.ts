@@ -11,9 +11,6 @@ interface UseLocationAutocompleteReturn {
 
 const DEBOUNCE_DELAY_MS = 450;
 
-// Track in-flight requests globally to deduplicate across multiple hook instances
-const inFlightRequests = new Map<string, Promise<SearchResult[]>>();
-
 export function useLocationAutocomplete(
   locationInput: string,
   isFocused: boolean,
@@ -33,40 +30,22 @@ export function useLocationAutocomplete(
     }
 
     latestQueryRef.current = q;
-
-    // Check if this query is already in-flight
-    if (inFlightRequests.has(q)) {
-      const cachedResult = await inFlightRequests.get(q);
-      if (latestQueryRef.current === q) {
-        setLocationSuggestions(cachedResult as SearchResult[]);
-      }
-      return;
-    }
-
     setIsLocationSearching(true);
-    const promise = searchLocations(q, 6)
-      .then((suggestions) => {
-        const result = suggestions as SearchResult[];
-        if (latestQueryRef.current === q) {
-          setLocationSuggestions(result);
-        }
-        inFlightRequests.delete(q);
-        return result;
-      })
-      .catch(() => {
-        if (latestQueryRef.current === q) {
-          setLocationSuggestions([]);
-        }
-        inFlightRequests.delete(q);
-        return [];
-      })
-      .finally(() => {
-        if (latestQueryRef.current === q) {
-          setIsLocationSearching(false);
-        }
-      });
 
-    inFlightRequests.set(q, promise);
+    try {
+      const results = await searchLocations(q, 6);
+      if (latestQueryRef.current === q) {
+        setLocationSuggestions(results);
+      }
+    } catch {
+      if (latestQueryRef.current === q) {
+        setLocationSuggestions([]);
+      }
+    } finally {
+      if (latestQueryRef.current === q) {
+        setIsLocationSearching(false);
+      }
+    }
   }, []);
 
   const searchNow = useCallback(

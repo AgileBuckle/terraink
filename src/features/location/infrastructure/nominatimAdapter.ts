@@ -13,7 +13,8 @@ import {
   getReverseGeocodeCacheKey,
 } from "./cacheKeys";
 
-// Deduplicate concurrent reverse geocode requests for the same coordinates
+// Deduplicate concurrent requests for the same query/coordinates
+const inFlightSearchRequests = new Map<string, Promise<SearchResult[]>>();
 const inFlightReverseRequests = new Map<string, Promise<SearchResult>>();
 
 export function createNominatimAdapter(
@@ -36,22 +37,28 @@ export function createNominatimAdapter(
       return cached;
     }
 
+    if (inFlightSearchRequests.has(cacheKey)) {
+      return inFlightSearchRequests.get(cacheKey)!;
+    }
+
     const url =
       "https://nominatim.openstreetmap.org/search?" +
       `format=jsonv2&addressdetails=1&limit=${normalizedLimit}&q=${encodeURIComponent(lookup)}`;
 
-    const response = await http.get(
-      url,
-      {
-        headers: { Accept: "application/json" },
-      },
-      16_000,
-    );
+    const promise = http
+      .get(url, { headers: { Accept: "application/json" } }, 16_000)
+      .then(async (response) => {
+        const data = await response.json();
+        const results = parseLocationResponseItems(data);
+        cache.write(cacheKey, results);
+        return results;
+      })
+      .finally(() => {
+        inFlightSearchRequests.delete(cacheKey);
+      });
 
-    const data = await response.json();
-    const results = parseLocationResponseItems(data);
-    cache.write(cacheKey, results);
-    return results;
+    inFlightSearchRequests.set(cacheKey, promise);
+    return promise;
   }
 
   async function geocodeLocation(query: string): Promise<SearchResult> {
