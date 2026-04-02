@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useExport } from "@/features/export/application/useExport";
+import type { ExportFormat } from "@/features/export/domain/types";
 import { CloseIcon, DownloadIcon, LoaderIcon } from "@/shared/ui/Icons";
 import SupportModal from "@/features/export/ui/SupportModal";
 import SocialLinkGroup from "@/shared/ui/SocialLinkGroup";
-
-type ExportFormat = "png" | "pdf" | "svg";
 
 export default function MobileExportFab() {
   const {

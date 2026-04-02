@@ -1,19 +1,18 @@
-import maplibregl, {
-  type Map as MaplibreMap,
-  type StyleSpecification,
-} from "maplibre-gl";
+import maplibregl from "maplibre-gl";
+import type { Map as MaplibreMap } from "maplibre-gl";
 import type {
   MarkerIconDefinition,
   MarkerItem,
-  MarkerProjectionInput,
 } from "@/features/markers/domain/types";
 import { drawMarkersOnCanvas } from "@/features/markers/infrastructure/rendering";
 import { applyFades } from "@/features/poster/infrastructure/renderer/layers";
 import { drawPosterText } from "@/features/poster/infrastructure/renderer/typography";
-import { MAP_OVERZOOM_SCALE } from "@/features/map/infrastructure/constants";
 import type { ResolvedTheme } from "@/features/theme/domain/types";
-
-const EXPORT_MAP_TIMEOUT_MS = 15_000;
+import {
+  waitForMapIdle,
+  createOffscreenContainer,
+  resolveExportRenderParams,
+} from "./exportUtils";
 
 interface LayeredSvgOptions {
   map: MaplibreMap;
@@ -29,31 +28,6 @@ interface LayeredSvgOptions {
   includeCredits: boolean;
   markers: MarkerItem[];
   markerIcons: MarkerIconDefinition[];
-}
-
-function waitForMapIdle(map: MaplibreMap): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    let settled = false;
-    const timeout = window.setTimeout(() => {
-      if (settled) return;
-      settled = true;
-      reject(new Error("Timed out while waiting for map tiles to render."));
-    }, EXPORT_MAP_TIMEOUT_MS);
-
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      window.clearTimeout(timeout);
-      resolve();
-    };
-
-    if (map.loaded() && !map.isMoving()) {
-      finish();
-      return;
-    }
-
-    map.once("idle", finish);
-  });
 }
 
 function renderMapCanvasToDataUrl(
@@ -111,60 +85,31 @@ export async function createLayeredSvgBlobFromMap({
 }: LayeredSvgOptions): Promise<Blob> {
   await waitForMapIdle(map);
 
-  const internalMapContainer = map.getContainer();
-  const visibleContainer = internalMapContainer.parentElement;
-  const visiblePreviewWidth =
-    visibleContainer?.clientWidth ||
-    Math.round(internalMapContainer.clientWidth / MAP_OVERZOOM_SCALE);
-  const visiblePreviewHeight =
-    visibleContainer?.clientHeight ||
-    Math.round(internalMapContainer.clientHeight / MAP_OVERZOOM_SCALE);
-  const previewWidth = Math.max(visiblePreviewWidth, 1);
-  const previewHeight = Math.max(visiblePreviewHeight, 1);
+  const {
+    center: mapCenter,
+    zoom,
+    pitch,
+    bearing,
+    style,
+    renderWidth,
+    renderHeight,
+    pixelRatio,
+    markerProjection,
+    markerScaleX,
+    markerScaleY,
+    markerSizeScale,
+  } = resolveExportRenderParams(map, exportWidth, exportHeight);
 
-  const currentCenter = map.getCenter();
-  const currentZoom = map.getZoom();
-  const currentPitch = map.getPitch();
-  const currentBearing = map.getBearing();
-  const style = map.getStyle() as StyleSpecification;
-
-  const widthScale = Math.max(exportWidth / previewWidth, 1);
-  const heightScale = Math.max(exportHeight / previewHeight, 1);
-  const basePixelRatio = Math.max(widthScale, heightScale, 1);
-
-  const renderWidth = Math.max(1, Math.round(previewWidth * MAP_OVERZOOM_SCALE));
-  const renderHeight = Math.max(1, Math.round(previewHeight * MAP_OVERZOOM_SCALE));
-  const pixelRatio = Math.max(basePixelRatio / MAP_OVERZOOM_SCALE, 1);
-
-  const markerProjection: MarkerProjectionInput = {
-    centerLat: currentCenter.lat,
-    centerLon: currentCenter.lng,
-    zoom: currentZoom,
-    bearingDeg: currentBearing,
-    canvasWidth: renderWidth,
-    canvasHeight: renderHeight,
-  };
-  const markerScaleX = exportWidth / renderWidth;
-  const markerScaleY = exportHeight / renderHeight;
-  const markerSizeScale = MAP_OVERZOOM_SCALE;
-
-  const offscreenContainer = document.createElement("div");
-  offscreenContainer.style.position = "fixed";
-  offscreenContainer.style.left = "-100000px";
-  offscreenContainer.style.top = "0";
-  offscreenContainer.style.width = `${renderWidth}px`;
-  offscreenContainer.style.height = `${renderHeight}px`;
-  offscreenContainer.style.pointerEvents = "none";
-  offscreenContainer.style.opacity = "0";
+  const offscreenContainer = createOffscreenContainer(renderWidth, renderHeight);
   document.body.appendChild(offscreenContainer);
 
   const exportMap = new maplibregl.Map({
     container: offscreenContainer,
     style,
-    center: [currentCenter.lng, currentCenter.lat],
-    zoom: currentZoom,
-    pitch: currentPitch,
-    bearing: currentBearing,
+    center: [mapCenter.lng, mapCenter.lat],
+    zoom,
+    pitch,
+    bearing,
     interactive: false,
     attributionControl: false,
     pixelRatio,

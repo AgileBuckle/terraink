@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
+import type { ExportFormat } from "@/features/export/domain/types";
 import { captureMapAsCanvas } from "@/features/export/infrastructure/mapExporter";
 import { compositeExport } from "@/features/poster/infrastructure/renderer";
 import { resolveCanvasSize } from "@/features/poster/infrastructure/renderer/canvas";
@@ -85,7 +86,7 @@ export function useExport() {
   }, []);
 
   const exportPoster = useCallback(
-    async (format: "png" | "pdf" | "svg") => {
+    async (format: ExportFormat) => {
       const map = mapRef.current;
       if (!map) {
         dispatch({ type: "SET_ERROR", error: "Map is not ready." });
