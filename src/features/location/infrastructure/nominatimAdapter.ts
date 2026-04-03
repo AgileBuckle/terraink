@@ -1,7 +1,7 @@
 import type { ICache } from "@/core/cache/ports";
 import type { IHttp } from "@/core/http/ports";
 import type { IGeocodePort } from "../domain/ports";
-import type { Location, SearchResult } from "../domain/types";
+import type { SearchResult } from "../domain/types";
 import {
   normalizeLocationResult,
   parseLocationResponseItems,
@@ -24,6 +24,7 @@ export function createNominatimAdapter(
   async function searchLocations(
     query: string,
     limit = 6,
+    signal?: AbortSignal,
   ): Promise<SearchResult[]> {
     const lookup = String(query ?? "").trim();
     if (lookup.length < 2) {
@@ -46,7 +47,7 @@ export function createNominatimAdapter(
       `format=jsonv2&addressdetails=1&limit=${normalizedLimit}&q=${encodeURIComponent(lookup)}`;
 
     const promise = http
-      .get(url, { headers: { Accept: "application/json" } }, 16_000)
+      .get(url, { headers: { Accept: "application/json" }, signal }, 16_000)
       .then(async (response) => {
         const data = await response.json();
         const results = parseLocationResponseItems(data);

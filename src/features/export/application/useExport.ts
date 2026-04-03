@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
+import { localStorageCache } from "@/core/cache/localStorageCache";
 import type { ExportFormat } from "@/features/export/domain/types";
 import { captureMapAsCanvas } from "@/features/export/infrastructure/mapExporter";
 import { compositeExport } from "@/features/poster/infrastructure/renderer";
@@ -25,33 +26,22 @@ export interface SupportPromptState {
   posterNumber: number;
 }
 
-function readPosterExportCount(): number {
-  if (typeof window === "undefined" || !window.localStorage) {
-    return 0;
-  }
+// Use a 1-year TTL so the export count persists across sessions.
+const EXPORT_COUNT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
-  try {
-    const raw = window.localStorage.getItem(EXPORT_COUNT_STORAGE_KEY);
-    const parsed = Number(raw);
-    if (!Number.isFinite(parsed) || parsed < 0) {
-      return 0;
-    }
-    return Math.floor(parsed);
-  } catch {
-    return 0;
+function readPosterExportCount(): number {
+  const stored = localStorageCache.read<number>(
+    EXPORT_COUNT_STORAGE_KEY,
+    EXPORT_COUNT_TTL_MS,
+  );
+  if (typeof stored === "number" && Number.isFinite(stored) && stored >= 0) {
+    return Math.floor(stored);
   }
+  return 0;
 }
 
 function writePosterExportCount(nextCount: number): void {
-  if (typeof window === "undefined" || !window.localStorage) {
-    return;
-  }
-
-  try {
-    window.localStorage.setItem(EXPORT_COUNT_STORAGE_KEY, String(nextCount));
-  } catch {
-    // Ignore storage write failures (quota/private mode).
-  }
+  localStorageCache.write(EXPORT_COUNT_STORAGE_KEY, nextCount);
 }
 
 /**

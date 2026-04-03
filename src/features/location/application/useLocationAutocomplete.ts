@@ -21,6 +21,7 @@ export function useLocationAutocomplete(
   const [isLocationSearching, setIsLocationSearching] = useState(false);
   const latestQueryRef = useRef("");
   const debounceIdRef = useRef<number | undefined>(undefined);
+  const abortRef = useRef<AbortController | null>(null);
 
   const performSearch = useCallback(async (query: string) => {
     const q = String(query ?? "").trim();
@@ -29,19 +30,29 @@ export function useLocationAutocomplete(
       return;
     }
 
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     latestQueryRef.current = q;
     setIsLocationSearching(true);
 
     try {
-      const results = await searchLocations(q, 6);
+      const results = await searchLocations(q, 6, controller.signal);
       if (latestQueryRef.current === q) {
         setLocationSuggestions(results);
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
       if (latestQueryRef.current === q) {
         setLocationSuggestions([]);
       }
     } finally {
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+      }
       if (latestQueryRef.current === q) {
         setIsLocationSearching(false);
       }
@@ -78,6 +89,8 @@ export function useLocationAutocomplete(
       cancelled = true;
       window.clearTimeout(debounceIdRef.current);
       debounceIdRef.current = undefined;
+      abortRef.current?.abort();
+      abortRef.current = null;
     };
   }, [locationInput, isFocused, performSearch]);
 
