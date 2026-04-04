@@ -7,15 +7,14 @@ import {
   TEXT_COUNTRY_Y_RATIO,
   TEXT_COORDS_Y_RATIO,
   TEXT_EDGE_MARGIN_RATIO,
-  CITY_TEXT_SHRINK_THRESHOLD,
   CITY_FONT_BASE_PX,
-  CITY_FONT_MIN_PX,
   COUNTRY_FONT_BASE_PX,
   COORDS_FONT_BASE_PX,
   ATTRIBUTION_FONT_BASE_PX,
   formatCityLabel,
+  computeCityFontScale,
+  computeAttributionColor,
 } from "@/features/poster/domain/textLayout";
-import { parseHex } from "@/shared/utils/color";
 
 interface PosterTextOverlayProps {
   city: string;
@@ -57,27 +56,11 @@ export default function PosterTextOverlay({
     : '"IBM Plex Mono", monospace';
 
   const cityLabel = formatCityLabel(city);
-
-  const cityLen = Math.max(city.length, 1);
-  const cityBaseSize = toCqMin(CITY_FONT_BASE_PX);
-  const cityMinSize = toCqMin(CITY_FONT_MIN_PX);
-  const cityFontSize =
-    cityLen > CITY_TEXT_SHRINK_THRESHOLD
-      ? `${Math.max(cityMinSize, cityBaseSize * (CITY_TEXT_SHRINK_THRESHOLD / cityLen))}cqmin`
-      : `${cityBaseSize}cqmin`;
-
+  const cityFontSize = `${toCqMin(CITY_FONT_BASE_PX) * computeCityFontScale(city)}cqmin`;
   const countryFontSize = `${toCqMin(COUNTRY_FONT_BASE_PX)}cqmin`;
   const coordsFontSize = `${toCqMin(COORDS_FONT_BASE_PX)}cqmin`;
   const attributionFontSize = `${toCqMin(ATTRIBUTION_FONT_BASE_PX)}cqmin`;
-  const landRgb = parseHex(landColor);
-  const landLuma = landRgb
-    ? (0.2126 * landRgb.r + 0.7152 * landRgb.g + 0.0722 * landRgb.b) / 255
-    : 0.5;
-  const attributionColor = showOverlay
-    ? textColor
-    : landLuma < 0.52
-      ? "#f5faff"
-      : "#0e1822";
+  const attributionColor = computeAttributionColor(textColor, landColor, showOverlay);
   const attributionOpacity = showOverlay ? 0.55 : 0.9;
 
   return (

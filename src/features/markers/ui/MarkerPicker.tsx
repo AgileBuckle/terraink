@@ -1,4 +1,5 @@
 import {
+  memo,
   useMemo,
   useRef,
   useState,
@@ -23,7 +24,7 @@ interface MarkerPickerProps {
   actionSlot?: ReactNode;
 }
 
-export default function MarkerPicker({
+const MarkerPicker = memo(function MarkerPicker({
   selectedIconId,
   markerColor,
   customIcons,
@@ -188,4 +189,6 @@ export default function MarkerPicker({
       {uploadError ? <p className="marker-picker__error">{uploadError}</p> : null}
     </div>
   );
-}
+});
+
+export default MarkerPicker;

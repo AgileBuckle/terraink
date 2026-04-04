@@ -7,7 +7,7 @@ import type {
 import {
   MAX_MARKER_SIZE,
   MIN_MARKER_SIZE,
-} from "@/features/markers/infrastructure/constants";
+} from "@/features/markers/domain/constants";
 import { createDefaultMarkerSettings } from "@/features/markers/infrastructure/helpers";
 import { featuredMarkerIcons } from "@/features/markers/infrastructure/iconRegistry";
 import { clamp } from "@/shared/geo/math";
@@ -80,9 +80,7 @@ export type PosterAction =
   | { type: "CLEAR_LOCATION" }
   | { type: "SET_LOCATION_FOCUSED"; focused: boolean }
   | { type: "SET_ERROR"; error: string }
-  | { type: "START_EXPORT" }
-  | { type: "FINISH_EXPORT" }
-  | { type: "FAIL_EXPORT"; error: string }
+  | { type: "SET_EXPORT_STATUS"; exporting: boolean; error?: string }
   | { type: "SET_MARKER_EDITOR_ACTIVE"; active: boolean }
   | { type: "SET_ACTIVE_MARKER"; markerId: string | null }
   | { type: "ADD_MARKER"; marker: MarkerItem }
@@ -219,14 +217,12 @@ export function posterReducer(
     case "SET_ERROR":
       return { ...state, error: action.error };
 
-    case "START_EXPORT":
-      return { ...state, error: "", isExporting: true };
-
-    case "FINISH_EXPORT":
-      return { ...state, isExporting: false };
-
-    case "FAIL_EXPORT":
-      return { ...state, error: action.error, isExporting: false };
+    case "SET_EXPORT_STATUS":
+      return {
+        ...state,
+        isExporting: action.exporting,
+        error: action.exporting ? "" : (action.error ?? state.error),
+      };
 
     case "SET_MARKER_EDITOR_ACTIVE":
       return {

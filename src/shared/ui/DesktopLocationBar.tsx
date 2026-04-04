@@ -19,7 +19,7 @@ import { MyLocationIcon, LocationIcon, SearchIcon } from "@/shared/ui/Icons";
  * Clicking the pin icon shows/hides the lat/lon coordinate fields.
  */
 export default function DesktopLocationBar() {
-  const { state } = usePosterContext();
+  const { state, dispatch, mapRef } = usePosterContext();
   const {
     handleChange,
     handleLocationSelect: handleLocationSelectBase,
@@ -30,7 +30,7 @@ export default function DesktopLocationBar() {
     state.form.location,
     state.isLocationFocused,
   );
-  const { flyToLocation } = useMapSync();
+  const { flyToLocation } = useMapSync(state, dispatch, mapRef);
   const { handleUseCurrentLocation, isLocatingUser, locationPermissionMessage } =
     useCurrentLocation(flyToLocation);
 

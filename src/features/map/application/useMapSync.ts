@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { usePosterContext } from "@/features/poster/ui/PosterContext";
 import { clamp } from "@/shared/geo/math";
 import { reverseGeocodeCoordinates } from "@/core/services";
+import type { MapInstanceRef } from "@/features/map/domain/types";
 import {
   MIN_DISTANCE_METERS,
   MAX_DISTANCE_METERS,
@@ -74,11 +74,26 @@ function resolveZoomBounds(
   };
 }
 
+interface MapSyncState {
+  form: { latitude: string; longitude: string; distance: string };
+  displayNameOverrides: { city: boolean; country: boolean };
+  selectedLocation: { label?: string; city?: string; country?: string; continent?: string } | null;
+}
+
+type MapSyncDispatch = (action: {
+  type: "SET_FORM_FIELDS";
+  fields: Partial<Record<string, string>>;
+  resetDisplayNameOverrides?: boolean;
+}) => void;
+
 /**
  * Bidirectional synchronization between form fields and MapLibre view.
  */
-export function useMapSync() {
-  const { state, dispatch, mapRef } = usePosterContext();
+export function useMapSync(
+  state: MapSyncState,
+  dispatch: MapSyncDispatch,
+  mapRef: MapInstanceRef,
+) {
   const { form } = state;
   const lastLocationLookupAtRef = useRef(0);
   const lastLookupCoordsRef = useRef<[number, number] | null>(null);

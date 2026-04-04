@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
+import { fetchAdapter } from "@/core/http/fetchAdapter";
+import { localStorageCache } from "@/core/cache/localStorageCache";
 
 interface UseRepoStarsReturn {
   repoStars: number | null;
   repoStarsLoading: boolean;
 }
 
-const REPO_STARS_CACHE_PREFIX = "terraink.repoStars.";
+const STARS_CACHE_KEY_PREFIX = "repoStars.";
 const memoryStarsCache = new Map<string, number>();
 const inFlightRequests = new Map<string, Promise<number | null>>();
+const MEMORY_CACHE_MAX = 50;
 
 function normalizeToApiUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
-    // Already an API URL
     if (parsed.hostname.includes("api.github.com")) return url;
 
-    // If it's a github.com repo page, build the API URL
     if (parsed.hostname.includes("github.com")) {
       const parts = parsed.pathname.split("/").filter(Boolean);
       if (parts.length >= 2) {
-        const owner = parts[0];
-        const repo = parts[1];
-        return `https://api.github.com/repos/${owner}/${repo}`;
+        return `https://api.github.com/repos/${parts[0]}/${parts[1]}`;
       }
     }
     return null;
@@ -30,47 +29,29 @@ function normalizeToApiUrl(url: string): string | null {
   }
 }
 
-function getStorageKey(apiUrl: string): string {
-  return `${REPO_STARS_CACHE_PREFIX}${encodeURIComponent(apiUrl)}`;
+function cacheKey(apiUrl: string): string {
+  return `${STARS_CACHE_KEY_PREFIX}${encodeURIComponent(apiUrl)}`;
 }
 
 function readCachedStars(apiUrl: string): number | null {
-  const cachedInMemory = memoryStarsCache.get(apiUrl);
-  if (typeof cachedInMemory === "number") {
-    return cachedInMemory;
-  }
+  const inMemory = memoryStarsCache.get(apiUrl);
+  if (typeof inMemory === "number") return inMemory;
 
-  if (typeof window === "undefined" || !window.localStorage) {
-    return null;
+  const stored = localStorageCache.read<number>(cacheKey(apiUrl));
+  if (typeof stored === "number" && Number.isFinite(stored) && stored >= 0) {
+    const normalized = Math.floor(stored);
+    memoryStarsCache.set(apiUrl, normalized);
+    return normalized;
   }
-
-  try {
-    const raw = window.localStorage.getItem(getStorageKey(apiUrl));
-    const parsed = Number(raw);
-    if (Number.isFinite(parsed) && parsed >= 0) {
-      const normalized = Math.floor(parsed);
-      memoryStarsCache.set(apiUrl, normalized);
-      return normalized;
-    }
-  } catch {
-    // Ignore cache read failures.
-  }
-
   return null;
 }
 
 function writeCachedStars(apiUrl: string, stars: number): void {
+  if (memoryStarsCache.size >= MEMORY_CACHE_MAX) {
+    memoryStarsCache.clear();
+  }
   memoryStarsCache.set(apiUrl, stars);
-
-  if (typeof window === "undefined" || !window.localStorage) {
-    return;
-  }
-
-  try {
-    window.localStorage.setItem(getStorageKey(apiUrl), String(stars));
-  } catch {
-    // Ignore cache write failures.
-  }
+  localStorageCache.write(cacheKey(apiUrl), stars);
 }
 
 export function useRepoStars(repoApiUrl: string): UseRepoStarsReturn {
@@ -97,33 +78,33 @@ export function useRepoStars(repoApiUrl: string): UseRepoStarsReturn {
       let request = inFlightRequests.get(finalUrl);
       if (!request) {
         request = (async () => {
-          const controller = new AbortController();
           try {
-            const response = await fetch(finalUrl, {
-              headers: {
-                Accept: "application/vnd.github+json",
-              },
-              signal: controller.signal,
+            const response = await fetchAdapter.get(finalUrl, {
+              headers: { Accept: "application/vnd.github+json" },
             });
 
             if (!response.ok) {
               throw new Error(`GitHub API failed with HTTP ${response.status}`);
             }
 
-            const payload = await response.json();
-            const stars = Number(payload?.stargazers_count);
+            const payload: unknown = await response.json();
+            const raw =
+              payload !== null &&
+              typeof payload === "object" &&
+              "stargazers_count" in payload
+                ? (payload as Record<string, unknown>).stargazers_count
+                : NaN;
+            const stars = Number(raw);
             if (Number.isFinite(stars) && stars >= 0) {
               const normalized = Math.floor(stars);
               writeCachedStars(finalUrl, normalized);
               return normalized;
             }
-
             return null;
           } catch {
             return null;
           } finally {
             inFlightRequests.delete(finalUrl);
-            controller.abort();
           }
         })();
         inFlightRequests.set(finalUrl, request);

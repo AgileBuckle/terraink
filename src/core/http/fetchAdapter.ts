@@ -7,14 +7,21 @@ async function fetchWithTimeout(
 ): Promise<Response> {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+  const { signal: externalSignal, ...restOptions } = options;
+
+  let onExternalAbort: (() => void) | null = null;
+  if (externalSignal) {
+    onExternalAbort = () => controller.abort();
+    externalSignal.addEventListener("abort", onExternalAbort, { once: true });
+  }
 
   try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
+    return await fetch(url, { ...restOptions, signal: controller.signal });
   } finally {
     window.clearTimeout(timeout);
+    if (externalSignal && onExternalAbort) {
+      externalSignal.removeEventListener("abort", onExternalAbort);
+    }
   }
 }
 

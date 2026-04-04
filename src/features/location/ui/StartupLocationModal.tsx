@@ -13,7 +13,7 @@ import {
   requestCurrentPositionWithRetry,
 } from "@/features/location/infrastructure";
 import { MyLocationIcon } from "@/shared/ui/Icons";
-import { usePosterContext } from "@/features/poster/ui/PosterContext";
+import { usePosterDispatch } from "@/features/poster/ui/PosterContext";
 import { useLocationAutocomplete } from "@/features/location/application/useLocationAutocomplete";
 import type { SearchResult } from "@/features/location/domain/types";
 
@@ -36,7 +36,7 @@ interface StartupLocationModalProps {
 export default function StartupLocationModal({
   onComplete,
 }: StartupLocationModalProps) {
-  const { dispatch } = usePosterContext();
+  const { dispatch } = usePosterDispatch();
   const [isOpen, setIsOpen] = useState(true);
   const [isClosing, setIsClosing] = useState(false);
   const [locationInput, setLocationInput] = useState("");

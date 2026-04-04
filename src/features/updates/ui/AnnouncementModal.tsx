@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { IoClose } from "react-icons/io5";
+import { APP_VERSION, UPDATES_URL } from "@/core/config";
 
 type UpdateCategory =
   | "new"
@@ -51,8 +52,7 @@ interface CategoryMeta {
 }
 
 const LAST_SEEN_VERSION = "last_seen_version";
-const CURRENT_VERSION = String(import.meta.env.VITE_APP_VERSION ?? "").trim();
-const UPDATES_URL = String(import.meta.env.VITE_UPDATES_URL ?? "/updates.json").trim();
+const CURRENT_VERSION = APP_VERSION;
 
 const categoryConfig: Record<UpdateCategory, CategoryMeta> = {
   new: { icon: "✨", label: "New" },
@@ -150,23 +150,28 @@ export default function AnnouncementModal() {
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
 
     async function loadUpdates() {
       try {
         setLoading(true);
-        const response = await fetch(UPDATES_URL, { cache: "no-store" });
+        const response = await fetch(UPDATES_URL, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
         if (!response.ok) {
           return;
         }
 
-        const data = (await response.json()) as UpdateVersion[];
+        const data: unknown = await response.json();
         if (!Array.isArray(data)) {
           return;
         }
 
-        const targetRelease = data.find((item) => item.version === CURRENT_VERSION);
-        if (!targetRelease || !Array.isArray(targetRelease.steps) || cancelled) {
+        const targetRelease = (data as UpdateVersion[]).find(
+          (item) => item.version === CURRENT_VERSION,
+        );
+        if (!targetRelease || !Array.isArray(targetRelease.steps)) {
           return;
         }
 
@@ -177,7 +182,7 @@ export default function AnnouncementModal() {
       } catch {
         // Silent fail: modal remains hidden if updates URL is unavailable.
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setLoading(false);
         }
       }
@@ -186,7 +191,7 @@ export default function AnnouncementModal() {
     loadUpdates();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 

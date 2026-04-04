@@ -1,8 +1,8 @@
-﻿import { CONTACT_EMAIL, LEGAL_NOTICE_URL, PRIVACY_URL } from "@/core/config";
+﻿import { APP_VERSION, CONTACT_EMAIL, LEGAL_NOTICE_URL, PRIVACY_URL } from "@/core/config";
 import { InfoIcon } from "@/shared/ui/Icons";
 
 export default function FooterNote() {
-  const appVersion = String(import.meta.env.VITE_APP_VERSION ?? "0.0.0").trim();
+  const appVersion = APP_VERSION;
   const contactEmail = String(CONTACT_EMAIL ?? "").trim();
   const legalNoticeUrl = String(LEGAL_NOTICE_URL ?? "").trim();
   const privacyUrl = String(PRIVACY_URL ?? "").trim();

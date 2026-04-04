@@ -56,7 +56,7 @@ export default function SettingsPanel({
 }: {
   mobileTab?: MobileTab;
 }) {
-  const { state, selectedTheme } = usePosterContext();
+  const { state, dispatch, mapRef, selectedTheme } = usePosterContext();
   const {
     handleChange,
     handleNumericFieldBlur,
@@ -73,7 +73,7 @@ export default function SettingsPanel({
     state.form.location,
     state.isLocationFocused,
   );
-  const { flyToLocation } = useMapSync();
+  const { flyToLocation } = useMapSync(state, dispatch, mapRef);
   const { handleUseCurrentLocation, isLocatingUser, locationPermissionMessage } =
     useCurrentLocation(flyToLocation);
 

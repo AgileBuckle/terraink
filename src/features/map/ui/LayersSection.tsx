@@ -1,8 +1,22 @@
-import type { PosterForm } from "@/features/poster/application/posterReducer";
 import MapDimensionFields from "./MapDimensionFields";
 
+interface LayerForm {
+  width: string;
+  height: string;
+  distance: string;
+  includeBuildings: boolean;
+  includeWater: boolean;
+  includeParks: boolean;
+  includeAeroway: boolean;
+  includeRail: boolean;
+  includeRoads: boolean;
+  includeRoadPath: boolean;
+  includeRoadMinorLow: boolean;
+  includeRoadOutline: boolean;
+}
+
 interface LayersSectionProps {
-  form: PosterForm;
+  form: LayerForm;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   minPosterCm: number;
   maxPosterCm: number;

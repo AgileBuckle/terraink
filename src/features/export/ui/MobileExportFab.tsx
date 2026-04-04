@@ -1,30 +1,29 @@
 import { useEffect, useState } from "react";
 import { useExport } from "@/features/export/application/useExport";
-import { usePosterContext } from "@/features/poster/ui/PosterContext";
+import type { ExportFormat } from "@/features/export/domain/types";
 import { CloseIcon, DownloadIcon, LoaderIcon } from "@/shared/ui/Icons";
 import SupportModal from "@/features/export/ui/SupportModal";
 import SocialLinkGroup from "@/shared/ui/SocialLinkGroup";
 
-type ExportFormat = "png" | "pdf" | "svg";
-
 export default function MobileExportFab() {
   const {
+    isExporting,
     handleDownloadPng,
     handleDownloadPdf,
     handleDownloadSvg,
     supportPrompt,
     dismissSupportPrompt,
   } = useExport();
-  const { state } = usePosterContext();
   const [isOpen, setIsOpen] = useState(false);
   const [activeFormat, setActiveFormat] = useState<ExportFormat | null>(null);
   const [isTriggerVisible, setIsTriggerVisible] = useState(true);
 
   useEffect(() => {
-    if (!state.isExporting) {
+    if (!isExporting && activeFormat) {
       setActiveFormat(null);
+      setIsOpen(false);
     }
-  }, [state.isExporting]);
+  }, [isExporting, activeFormat]);
 
   useEffect(() => {
     const FOOTER_OVERLAP_THRESHOLD_PX = 140;
@@ -48,7 +47,6 @@ export default function MobileExportFab() {
 
   const runExport = (format: ExportFormat) => {
     setActiveFormat(format);
-    setIsOpen(false);
     if (format === "png") {
       void handleDownloadPng();
       return;
@@ -61,7 +59,7 @@ export default function MobileExportFab() {
   };
 
   const isLoading = (format: ExportFormat) =>
-    state.isExporting && activeFormat === format;
+    isExporting && activeFormat === format;
 
   return (
     <>
@@ -81,7 +79,7 @@ export default function MobileExportFab() {
         <div
           className="mobile-export-modal-backdrop"
           role="presentation"
-          onClick={() => setIsOpen(false)}
+          onClick={() => !isExporting && setIsOpen(false)}
         >
           <div
             className="mobile-export-modal"
@@ -95,7 +93,7 @@ export default function MobileExportFab() {
               <button
                 type="button"
                 className="mobile-export-modal-close"
-                onClick={() => setIsOpen(false)}
+                onClick={() => !isExporting && setIsOpen(false)}
                 aria-label="Close export options"
               >
                 <CloseIcon />
@@ -106,7 +104,7 @@ export default function MobileExportFab() {
                 type="button"
                 className="mobile-export-option mobile-export-option--png"
                 onClick={() => runExport("png")}
-                disabled={state.isExporting}
+                disabled={isExporting}
               >
                 {isLoading("png") ? (
                   <LoaderIcon className="mobile-export-option-icon is-spinning" />
@@ -119,7 +117,7 @@ export default function MobileExportFab() {
                 type="button"
                 className="mobile-export-option mobile-export-option--pdf"
                 onClick={() => runExport("pdf")}
-                disabled={state.isExporting}
+                disabled={isExporting}
               >
                 {isLoading("pdf") ? (
                   <LoaderIcon className="mobile-export-option-icon is-spinning" />
@@ -132,7 +130,7 @@ export default function MobileExportFab() {
                 type="button"
                 className="mobile-export-option mobile-export-option--svg"
                 onClick={() => runExport("svg")}
-                disabled={state.isExporting}
+                disabled={isExporting}
               >
                 {isLoading("svg") ? (
                   <LoaderIcon className="mobile-export-option-icon is-spinning" />

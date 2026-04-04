@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { localStorageCache } from "@/core/cache/localStorageCache";
+import { isNativePlatform } from "@/core/platform";
 import {
   BeforeInstallPromptEvent,
   INSTALL_DISMISS_KEY,
@@ -45,6 +47,8 @@ export default function useInstallPrompt() {
   const [swReady, setSwReady] = useState(false);
 
   useEffect(() => {
+    if (isNativePlatform()) return;
+
     setBeforeInstallPromptFired(Boolean(window.__terrainkDeferredInstallPrompt));
     setSwControlled(Boolean(navigator.serviceWorker?.controller));
     if (navigator.serviceWorker?.ready) {
@@ -55,8 +59,7 @@ export default function useInstallPrompt() {
 
     if (isInStandaloneMode()) return;
 
-    const dismissedTs = localStorage.getItem(INSTALL_DISMISS_KEY);
-    if (dismissedTs && Date.now() - Number(dismissedTs) < WEEK_MS) {
+    if (localStorageCache.read<boolean>(INSTALL_DISMISS_KEY, WEEK_MS)) {
       setDismissed(true);
       return;
     }
@@ -101,7 +104,7 @@ export default function useInstallPrompt() {
   }, []);
 
   function dismiss() {
-    localStorage.setItem(INSTALL_DISMISS_KEY, String(Date.now()));
+    localStorageCache.write(INSTALL_DISMISS_KEY, true);
     setDismissed(true);
     setShowIosHint(false);
     setShowAndroidHint(false);

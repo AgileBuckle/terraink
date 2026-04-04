@@ -177,26 +177,26 @@
     },
     "neon": {
       "name": "Neon",
-      "description": "Dark background with electric pink/cyan - bold night city vibes",
+      "description": "Neon-drenched high-contrast palette with magenta and cyan accents.",
       "ui": {
-        "bg": "#0D0D1A",
-        "text": "#00FFFF"
+        "bg": "#0B0F1A",
+        "text": "#00F5FF"
       },
       "map": {
-        "land": "#0D0D1A",
-        "water": "#080815",
-        "waterway": "#080815",
-        "parks": "#17172A",
-        "buildings": "#007E99",
-        "aeroway": "#17172A",
-        "rail": "#00ffff",
+        "land": "#0B0F1A",
+        "water": "#001433",
+        "waterway": "#002044",
+        "parks": "#1A0B2A",
+        "buildings": "#FF2D95",
+        "aeroway": "#1A0B2A",
+        "rail": "#00F5FF",
         "roads": {
-          "major": "#FF00F0",
-          "path": "#094e58",
-          "outline": "#095f68",
-          "minor_high": "#9900BB",
-          "minor_mid": "#0a3d48",
-          "minor_low": "#0b2f3a"
+          "major": "#FF2D95",
+          "path": "#21203A",
+          "outline": "#0B0F1A",
+          "minor_high": "#FF6EB4",
+          "minor_mid": "#8A33FF",
+          "minor_low": "#4A0099"
         }
       }
     },

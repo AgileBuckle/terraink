@@ -100,7 +100,13 @@ const INITIAL_STATE: PosterState = {
   },
 };
 
-/* ────── Context shape ────── */
+/* ────── Context shapes ────── */
+
+interface PosterDispatchContextValue {
+  dispatch: React.Dispatch<PosterAction>;
+}
+
+const PosterDispatchContext = createContext<PosterDispatchContextValue | null>(null);
 
 interface PosterContextValue {
   state: PosterState;
@@ -211,6 +217,11 @@ export function PosterProvider({ children }: { children: ReactNode }) {
     ],
   );
 
+  const dispatchValue = useMemo<PosterDispatchContextValue>(
+    () => ({ dispatch }),
+    [dispatch],
+  );
+
   const value = useMemo<PosterContextValue>(
     () => ({
       state,
@@ -224,7 +235,9 @@ export function PosterProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <PosterContext.Provider value={value}>{children}</PosterContext.Provider>
+    <PosterDispatchContext.Provider value={dispatchValue}>
+      <PosterContext.Provider value={value}>{children}</PosterContext.Provider>
+    </PosterDispatchContext.Provider>
   );
 }
 
@@ -234,6 +247,14 @@ export function usePosterContext(): PosterContextValue {
   const ctx = useContext(PosterContext);
   if (!ctx) {
     throw new Error("usePosterContext must be used within a PosterProvider");
+  }
+  return ctx;
+}
+
+export function usePosterDispatch(): PosterDispatchContextValue {
+  const ctx = useContext(PosterDispatchContext);
+  if (!ctx) {
+    throw new Error("usePosterDispatch must be used within a PosterProvider");
   }
   return ctx;
 }

@@ -4,9 +4,14 @@
   --ink: #e6edf4;
   --panel: rgba(10, 20, 31, 0.92);
   --line: rgba(146, 176, 200, 0.24);
+  --border: rgba(151, 183, 207, 0.34);
   --strong-line: rgba(166, 199, 223, 0.45);
   --positive: #6bd8a0;
   --negative: #ff8372;
+  --focus-ring: rgba(112, 184, 222, 0.82);
+  --item-bg: rgba(20, 38, 52, 0.94);
+  --sheet-bg: rgba(11, 20, 30, 0.98);
+  --overlay-bg: rgba(9, 16, 24, 0.97);
 }
 
 *,

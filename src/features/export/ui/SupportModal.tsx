@@ -27,20 +27,20 @@ export default function SupportModal({
         aria-labelledby={titleId}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="credits-modal-body">
-          <p className="credits-modal-headline" id={titleId}>
+        <div className="credits-modal__body">
+          <p className="credits-modal__headline" id={titleId}>
             ✨ Your poster is ready!
           </p>
-          <p className="credits-modal-text">
+          <p className="credits-modal__text">
             If Terraink helped you create this poster, consider supporting the project on Ko-fi.
           </p>
-          <p className="credits-modal-text">
+          <p className="credits-modal__text">
             This was your poster <strong>#{posterNumber}</strong> 🎉
           </p>
-          <div className="credits-modal-actions">
+          <div className="credits-modal__actions">
             {kofiUrl ? (
               <a
-                className="credits-modal-keep"
+                className="credits-modal__keep"
                 href={kofiUrl}
                 target="_blank"
                 rel="noreferrer"
@@ -50,7 +50,7 @@ export default function SupportModal({
             ) : null}
             <button
               type="button"
-              className="credits-modal-remove"
+              className="credits-modal__remove"
               onClick={onClose}
             >
               {kofiUrl ? "Maybe later" : "Close"}

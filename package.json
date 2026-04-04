@@ -1,12 +1,13 @@
 {
   "name": "terraink",
   "private": true,
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
+  "license": "AGPL-3.0-only",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "bunx --bun vite --host",
+    "build": "bunx --bun vite build",
+    "preview": "bunx --bun vite preview --host",
     "typecheck": "tsc --noEmit",
     "showcase:grid": "node scripts/combine-showcase-grid.mjs"
   },

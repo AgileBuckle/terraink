@@ -18,15 +18,31 @@ import ColorPicker from "@/features/theme/ui/ColorPicker";
 import ThemeColorEditor from "@/features/theme/ui/ThemeColorEditor";
 import ThemeSummarySection from "@/features/theme/ui/ThemeSummarySection";
 import { CheckIcon, EditIcon } from "@/shared/ui/Icons";
-import type { PosterForm } from "@/features/poster/application/posterReducer";
 import type { ResolvedTheme } from "@/features/theme/domain/types";
 import type { LayoutGroup } from "@/features/layout/domain/types";
 
 const FALLBACK_COLOR = "#000000";
 
+interface MapSettingsForm {
+  theme: string;
+  layout: string;
+  width: string;
+  height: string;
+  distance: string;
+  includeBuildings: boolean;
+  includeWater: boolean;
+  includeParks: boolean;
+  includeAeroway: boolean;
+  includeRail: boolean;
+  includeRoads: boolean;
+  includeRoadPath: boolean;
+  includeRoadMinorLow: boolean;
+  includeRoadOutline: boolean;
+}
+
 interface MapSettingsSectionProps {
   activeMobileTab?: string;
-  form: PosterForm;
+  form: MapSettingsForm;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onNumericFieldBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
   onThemeChange: (themeId: string) => void;

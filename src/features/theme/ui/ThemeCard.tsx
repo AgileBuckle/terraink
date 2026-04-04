@@ -33,12 +33,19 @@ export default function ThemeCard({
   const majorPaletteIndices = majorPaletteKeys
     .map((key) => DISPLAY_PALETTE_KEYS.indexOf(key))
     .filter((index) => index >= 0);
-  const palette = Array.isArray(themeOption.palette)
-    ? majorPaletteIndices
-        .map((index) => themeOption.palette[index])
-        .filter((color): color is string => Boolean(color))
-        .filter((color, index, colors) => colors.indexOf(color) === index)
-    : [];
+  const palette = (() => {
+    if (!Array.isArray(themeOption.palette)) return [];
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const index of majorPaletteIndices) {
+      const color = themeOption.palette[index];
+      if (color && !seen.has(color)) {
+        seen.add(color);
+        result.push(color);
+      }
+    }
+    return result;
+  })();
   const className = ["theme-card", isSelected ? "is-selected" : ""]
     .filter(Boolean)
     .join(" ");

@@ -78,7 +78,7 @@
     justify-content: space-between;
     margin: 0;
     padding: 0 20px;
-    background: rgba(9, 16, 24, 0.97);
+    background: var(--overlay-bg);
     border-bottom: 1px solid rgba(146, 176, 200, 0.12);
     box-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
     z-index: 50;
@@ -489,7 +489,7 @@
     right: 0;
     margin-top: 4px;
     padding: 4px;
-    background: rgba(9, 16, 24, 0.97);
+    background: var(--overlay-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(146, 176, 200, 0.18);
@@ -587,7 +587,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     pointer-events: auto;
-    background: rgba(11, 20, 30, 0.98);
+    background: var(--sheet-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(146, 176, 200, 0.14);
@@ -609,7 +609,7 @@
   .desktop-settings-slide .settings-panel {
     border: none;
     border-radius: 0;
-    background: rgba(11, 20, 30, 0.98);
+    background: var(--sheet-bg);
     box-shadow: none;
     min-width: unset;
     width: 100%;
@@ -859,7 +859,7 @@
     margin: 0;
     padding: 8px 18px 8px 82px;
     border-top: 1px solid rgba(146, 176, 200, 0.12);
-    background: rgba(9, 16, 24, 0.97);
+    background: var(--overlay-bg);
     box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.28);
     white-space: nowrap;
   }
@@ -927,7 +927,7 @@
     bottom: calc(100% + 8px);
     max-width: min(420px, 55vw);
     padding: 8px 10px;
-    border: 1px solid rgba(146, 176, 200, 0.24);
+    border: 1px solid var(--line);
     border-radius: 8px;
     background: rgba(10, 20, 31, 0.98);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42);
@@ -980,7 +980,7 @@
     width: min(600px, 90vw);
     max-height: 82vh;
     overflow-y: auto;
-    background: rgba(11, 20, 30, 0.98);
+    background: var(--sheet-bg);
     border: 1px solid rgba(146, 176, 200, 0.18);
     border-radius: 20px;
     box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6);
@@ -1162,7 +1162,8 @@
   }
 
   .desktop-export-fab:hover .desktop-export-flyout,
-  .desktop-export-fab:focus-within .desktop-export-flyout {
+  .desktop-export-fab:focus-within .desktop-export-flyout,
+  .desktop-export-fab.is-exporting .desktop-export-flyout {
     max-height: 180px;
     opacity: 1;
     pointer-events: auto;
@@ -1256,12 +1257,14 @@
   }
 
   .desktop-export-fab:hover .desktop-export-label-hover,
-  .desktop-export-fab:focus-within .desktop-export-label-hover {
+  .desktop-export-fab:focus-within .desktop-export-label-hover,
+  .desktop-export-fab.is-exporting .desktop-export-label-hover {
     display: inline;
   }
 
   .desktop-export-fab:hover .desktop-export-label-default,
-  .desktop-export-fab:focus-within .desktop-export-label-default {
+  .desktop-export-fab:focus-within .desktop-export-label-default,
+  .desktop-export-fab.is-exporting .desktop-export-label-default {
     display: none;
   }
 

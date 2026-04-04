@@ -68,7 +68,7 @@ export default function PreviewPanel() {
     handleMove,
     handleMoveEnd,
     setContainerWidth,
-  } = useMapSync();
+  } = useMapSync(state, dispatch, mapRef);
 
   const frameRef = useRef<HTMLDivElement | null>(null);
   const ghostCanvasRef = useRef<HTMLCanvasElement | null>(null);

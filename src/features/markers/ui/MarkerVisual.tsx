@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { memo, type CSSProperties } from "react";
 import type { MarkerIconDefinition } from "@/features/markers/domain/types";
 
 interface MarkerVisualProps {
@@ -8,7 +8,7 @@ interface MarkerVisualProps {
   className?: string;
 }
 
-export default function MarkerVisual({
+const MarkerVisual = memo(function MarkerVisual({
   icon,
   size,
   color,
@@ -61,4 +61,6 @@ export default function MarkerVisual({
       )}
     </span>
   );
-}
+});
+
+export default MarkerVisual;

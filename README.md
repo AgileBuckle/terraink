@@ -1,6 +1,6 @@
 ![](./public/assets/banner.png)
 
-# TerraInk
+# Terraink
 
 [![Website Badge](https://img.shields.io/badge/Website-fff?logo=appveyor&logoColor=000&style=for-the-badge)](https://terraink.app)
 [![Email Badge](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=fff&style=for-the-badge)](mailto:hello@terraink.app)
@@ -23,11 +23,9 @@
 [![Cloudflare Badge](https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflare&logoColor=fff&style=for-the-badge)](https://www.cloudflare.com)
 [![Docker Badge](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff&style=for-the-badge)](https://www.docker.com)
 
-> Note: TerraInk is still in development. Every feedback is appreciated. This is a for-fun, open-source project, and community contributions are very welcome.
+> Note: Terraink is still in development. Every feedback is appreciated. This is an open-source project, and community contributions are very welcome.
 
-## Acknowledgment
-
-This project is a JavaScript reimplementation inspired by the original MapToPoster [originalankur/maptoposter](https://github.com/originalankur/maptoposter) by [Ankur Gupta](https://github.com/originalankur) (MIT license). My app is built using Bun, React, and TypeScript. It allows users to create custom city map posters with various styling options, leveraging OpenStreetMap data rendered via MapLibre and OpenFreeMap vector tiles.
+> **License & Trademark Notice:** This project is licensed under AGPL-3.0 and includes trademark protections. See the [License](#license) and [Trademark](#trademark) sections for details.
 
 ## Features
 
@@ -60,6 +58,24 @@ All showcase images are stored in `public/assets/showcase/`.
   <img src="./public/assets/showcase/showcase_1.png" alt="Featured showcase example 1" width="100%" />
   <img src="./public/assets/showcase/showcase_2.png" alt="Featured showcase example 2" width="100%" />
 </p>
+
+## License
+
+As of **April 3rd 2026**, all new changes to this repository are licensed under [AGPL-3.0](LICENSE). Code released before that date remains under the [MIT License](LICENSE-OLD).
+
+The hosted Terraink service includes attribution and branding as part of the user interface.
+
+If you deploy or modify the open-source version, you are responsible for complying with the AGPL-3.0 license, including preserving license and copyright notices.
+
+For access to the hosted version with additional features and support, see Terraink Business or contact: [business@terraink.app](mailto:business@terraink.app).
+
+## Trademark
+
+Terraink™ is a trademark of Yousuf Amanuel. An application for registration has been filed with the German Patent and Trade Mark Office (DPMA). This filing establishes priority rights under the Paris Convention, allowing international trademark registration to be pursued within six months of the original filing date. The Terraink logo, visual identity, and branding assets are copyright © 2026 Yousuf Amanuel. All rights reserved.
+
+Unauthorized use of the Terraink name in connection with similar software, map services, or related commercial products may be restricted. For licensing inquiries, contact [business@terraink.app](mailto:business@terraink.app).
+
+See [TRADEMARK.md](./TRADEMARK.md) for details.
 
 ## Run
 
@@ -120,7 +136,7 @@ docker run -d --name terraink -p 7200:80 --restart unless-stopped terraink:lates
 
 ## Contributing
 
-> The contribution guidelines are meant to keep TerraInk easy to extend, review, and maintain over time. They are here to support a durable architecture, not to add unnecessary friction.
+> The contribution guidelines are meant to keep Terraink easy to extend, review, and maintain over time. They are here to support a durable architecture, not to add unnecessary friction.
 
 Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
 
@@ -130,16 +146,18 @@ Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
 - Avoid hard-coded values when constants, configuration, or reusable abstractions are more appropriate.
 - AI-assisted coding is allowed, but submissions must be reviewed, refined, and intentionally engineered before review.
 
+## Attribution
+
+- **Map data**: © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright), licensed under [ODbL](https://opendatacommons.org/licenses/odbl/)
+- **Tile schema**: © [OpenMapTiles](https://openmaptiles.org/), licensed under [ODbL](https://openmaptiles.org/docs/tileset/openmaptiles/)
+- **Tile hosting**: [OpenFreeMap](https://openfreemap.org/)
+- **Geocoding**: [Nominatim](https://nominatim.openstreetmap.org/) / OpenStreetMap data
+- **Map renderer**: [MapLibre GL JS](https://maplibre.org/), licensed under [BSD-3-Clause](https://github.com/maplibre/maplibre-gl-js/blob/main/LICENSE.txt)
+
+## Acknowledgment
+
+Terraink was inspired by [MapToPoster](https://github.com/originalankur/maptoposter) by [Ankur Gupta](https://github.com/originalankur), originally released under the MIT license. Terraink is an independent reimplementation built from scratch using Bun, React, and TypeScript, and has since evolved significantly beyond the original concept.
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=yousifamanuel/terraink&type=Date)](https://star-history.com/#yousifamanuel/terraink&Date)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Trademark
-
-The **Terraink™** name, logo, and branding assets are trademarks of the project owner.</br>
-The MIT license grants you the right to use the code, but it does **not** grant any rights to use the project's name or branding for your own commercial purposes or hosted services.</br>
-See [TRADEMARK.md](./TRADEMARK.md) for details.

@@ -1,8 +1,13 @@
 import { MIN_DISTANCE_METERS, MAX_DISTANCE_METERS } from "@/core/config";
-import type { PosterForm } from "@/features/poster/application/posterReducer";
+
+interface MapDimensionForm {
+  width: string;
+  height: string;
+  distance: string;
+}
 
 interface MapDimensionFieldsProps {
-  form: PosterForm;
+  form: MapDimensionForm;
   minPosterCm: number;
   maxPosterCm: number;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
