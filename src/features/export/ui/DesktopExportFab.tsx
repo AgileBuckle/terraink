@@ -24,7 +24,7 @@ export default function DesktopExportFab() {
 
   return (
     <>
-      <div className="desktop-export-fab">
+      <div className={`desktop-export-fab${isExporting ? " is-exporting" : ""}`}>
         {/* SVG + PDF fly out above on hover */}
         <div className="desktop-export-flyout">
           <button

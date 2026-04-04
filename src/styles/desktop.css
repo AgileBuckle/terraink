@@ -1162,7 +1162,8 @@
   }
 
   .desktop-export-fab:hover .desktop-export-flyout,
-  .desktop-export-fab:focus-within .desktop-export-flyout {
+  .desktop-export-fab:focus-within .desktop-export-flyout,
+  .desktop-export-fab.is-exporting .desktop-export-flyout {
     max-height: 180px;
     opacity: 1;
     pointer-events: auto;
@@ -1256,12 +1257,14 @@
   }
 
   .desktop-export-fab:hover .desktop-export-label-hover,
-  .desktop-export-fab:focus-within .desktop-export-label-hover {
+  .desktop-export-fab:focus-within .desktop-export-label-hover,
+  .desktop-export-fab.is-exporting .desktop-export-label-hover {
     display: inline;
   }
 
   .desktop-export-fab:hover .desktop-export-label-default,
-  .desktop-export-fab:focus-within .desktop-export-label-default {
+  .desktop-export-fab:focus-within .desktop-export-label-default,
+  .desktop-export-fab.is-exporting .desktop-export-label-default {
     display: none;
   }
 
