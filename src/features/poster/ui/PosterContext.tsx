@@ -66,6 +66,7 @@ export const DEFAULT_FORM: PosterForm = {
   fontFamily: "",
   showPosterText: true,
   includeCredits: true,
+  includeLandcover: true,
   includeBuildings: false,
   includeWater: true,
   includeParks: true,
@@ -191,6 +192,7 @@ export function PosterProvider({ children }: { children: ReactNode }) {
   const mapStyle = useMemo(
     () =>
       generateMapStyle(effectiveTheme, {
+        includeLandcover: state.form.includeLandcover,
         includeBuildings: state.form.includeBuildings,
         includeWater: state.form.includeWater,
         includeParks: state.form.includeParks,
@@ -204,6 +206,7 @@ export function PosterProvider({ children }: { children: ReactNode }) {
       }),
     [
       effectiveTheme,
+      state.form.includeLandcover,
       state.form.includeBuildings,
       state.form.includeWater,
       state.form.includeParks,

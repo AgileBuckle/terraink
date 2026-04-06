@@ -9,6 +9,7 @@
       },
       "map": {
         "land": "#F3E1DA",
+        "landcover": "#EFD8D0",
         "water": "#DFC0B5",
         "waterway": "#DFC0B5",
         "parks": "#EACFC6",
@@ -34,6 +35,7 @@
       },
       "map": {
         "land": "#1C0E09",
+        "landcover": "#28140C",
         "water": "#2C140C",
         "waterway": "#2C140C",
         "parks": "#381A10",
@@ -59,6 +61,7 @@
       },
       "map": {
         "land": "#1A070F",
+        "landcover": "#280C18",
         "water": "#2A0D17",
         "waterway": "#2A0D17",
         "parks": "#351021",
@@ -84,6 +87,7 @@
       },
       "map": {
         "land": "#DDE8DD",
+        "landcover": "#D8E4DA",
         "water": "#C5D4CB",
         "waterway": "#C5D4CB",
         "parks": "#D3DFD7",
@@ -109,6 +113,7 @@
       },
       "map": {
         "land": "#E1D2C6",
+        "landcover": "#DCCCBE",
         "water": "#CBB5A1",
         "waterway": "#CBB5A1",
         "parks": "#D8C6B5",
@@ -134,6 +139,7 @@
       },
       "map": {
         "land": "#DFD5C8",
+        "landcover": "#D9CEC0",
         "water": "#C4B8A8",
         "waterway": "#C4B8A8",
         "parks": "#D2C6B7",
@@ -159,6 +165,7 @@
       },
       "map": {
         "land": "#0A1628",
+        "landcover": "#0D1C2F",
         "water": "#061020",
         "waterway": "#061020",
         "parks": "#0F2235",
@@ -184,6 +191,7 @@
       },
       "map": {
         "land": "#0B0F1A",
+        "landcover": "#130D22",
         "water": "#001433",
         "waterway": "#002044",
         "parks": "#1A0B2A",
@@ -209,6 +217,7 @@
       },
       "map": {
         "land": "#F5EDE4",
+        "landcover": "#EFE7DA",
         "water": "#A8C4C4",
         "waterway": "#A8C4C4",
         "parks": "#E8E0D0",
@@ -234,6 +243,7 @@
       },
       "map": {
         "land": "#1A3A5C",
+        "landcover": "#1D4066",
         "water": "#0E2740",
         "waterway": "#0E2740",
         "parks": "#1F466F",
@@ -259,6 +269,7 @@
       },
       "map": {
         "land": "#FFFFFF",
+        "landcover": "#F6F6F6",
         "water": "#B0B0B0",
         "waterway": "#B0B0B0",
         "parks": "#ECECEC",
@@ -284,6 +295,7 @@
       },
       "map": {
         "land": "#E8F0F0",
+        "landcover": "#E0ECE8",
         "water": "#C0D8D8",
         "waterway": "#C0D8D8",
         "parks": "#D8E8E0",
@@ -309,6 +321,7 @@
       },
       "map": {
         "land": "#062C22",
+        "landcover": "#0B3F30",
         "water": "#0D4536",
         "waterway": "#0D4536",
         "parks": "#0F523E",
@@ -334,6 +347,7 @@
       },
       "map": {
         "land": "#F0F4F0",
+        "landcover": "#E2EEE2",
         "water": "#B8D4D4",
         "waterway": "#B8D4D4",
         "parks": "#D4E8D4",
@@ -359,6 +373,7 @@
       },
       "map": {
         "land": "#FAF8F5",
+        "landcover": "#F5F3EE",
         "water": "#E8E4E0",
         "waterway": "#E8E4E0",
         "parks": "#F0EDE8",
@@ -384,6 +399,7 @@
       },
       "map": {
         "land": "#000000",
+        "landcover": "#0E0E0E",
         "water": "#0B0B0B",
         "waterway": "#0B0B0B",
         "parks": "#171717",
@@ -409,6 +425,7 @@
       },
       "map": {
         "land": "#F0F8FA",
+        "landcover": "#E4F1F1",
         "water": "#B8D8E8",
         "waterway": "#B8D8E8",
         "parks": "#D8EAE8",
@@ -434,6 +451,7 @@
       },
       "map": {
         "land": "#FAF7F2",
+        "landcover": "#F1F2EB",
         "water": "#D4E4ED",
         "waterway": "#D4E4ED",
         "parks": "#E8EDE4",

@@ -189,6 +189,7 @@ function lineClassFilter(classes: string[]): any {
 export function generateMapStyle(
   theme: ResolvedTheme,
   options?: {
+    includeLandcover?: boolean;
     includeBuildings?: boolean;
     includeWater?: boolean;
     includeParks?: boolean;
@@ -209,6 +210,7 @@ export function generateMapStyle(
       BUILDING_BLEND_FACTOR,
     );
 
+  const includeLandcover = options?.includeLandcover ?? true;
   const includeBuildings = options?.includeBuildings ?? true;
   const includeWater = options?.includeWater ?? true;
   const includeParks = options?.includeParks ?? true;
@@ -284,6 +286,20 @@ export function generateMapStyle(
         id: "background",
         type: "background",
         paint: { "background-color": theme.map.land },
+      },
+
+      // Landcover (forests, grass, farmland, etc.) drawn first so parks and
+      // water can paint over it where they overlap.
+      {
+        id: "landcover",
+        source: SOURCE_ID,
+        "source-layer": "landcover",
+        type: "fill" as const,
+        layout: { visibility: includeLandcover ? ("visible" as const) : ("none" as const) },
+        paint: {
+          "fill-color": theme.map.landcover,
+          "fill-opacity": 0.7,
+        },
       },
 
       // Parks are drawn before water so that marine protected areas / ocean parks

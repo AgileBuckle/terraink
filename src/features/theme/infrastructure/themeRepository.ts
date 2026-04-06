@@ -25,6 +25,7 @@ const fallbackTheme: ResolvedTheme = {
   },
   map: {
     land: "#F5EDE4",
+    landcover: "#EFE7DA",
     water: "#A8C4C4",
     waterway: "#A8C4C4",
     parks: "#E8E0D0",
@@ -46,6 +47,7 @@ const themeColorLookup: Record<ThemeColorKey, string[]> = {
   "ui.bg": ["ui.bg", "gradient_color", "bg"],
   "ui.text": ["ui.text", "text"],
   "map.land": ["map.land", "bg"],
+  "map.landcover": ["map.landcover", "landcover"],
   "map.water": ["map.water", "water"],
   "map.waterway": ["map.waterway", "waterway", "map.water", "water"],
   "map.parks": ["map.parks", "parks"],
@@ -89,6 +91,7 @@ const referenceAliases: Record<string, string> = {
   text: "ui.text",
   gradient_color: "ui.bg",
   land: "map.land",
+  landcover: "map.landcover",
   water: "map.water",
   waterway: "map.waterway",
   parks: "map.parks",
@@ -205,6 +208,9 @@ function normalizeTheme(themeInput: unknown): ResolvedTheme {
   const parks =
     resolveByCandidates(theme, themeColorLookup["map.parks"]) ||
     fallbackTheme.map.parks;
+  const landcover =
+    resolveByCandidates(theme, themeColorLookup["map.landcover"]) ||
+    blendHex(land, parks, 0.35);
 
   const roadMajor =
     resolveByCandidates(theme, themeColorLookup["map.roads.major"]) || uiText;
@@ -249,6 +255,7 @@ function normalizeTheme(themeInput: unknown): ResolvedTheme {
     },
     map: {
       land,
+      landcover,
       water,
       waterway,
       parks,

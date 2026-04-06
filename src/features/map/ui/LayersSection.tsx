@@ -4,6 +4,7 @@ interface LayerForm {
   width: string;
   height: string;
   distance: string;
+  includeLandcover: boolean;
   includeBuildings: boolean;
   includeWater: boolean;
   includeParks: boolean;
@@ -33,6 +34,18 @@ export default function LayersSection({
   return (
     <section className="panel-block">
       <p className="section-summary-label">LAYERS</p>
+      <label className="toggle-field">
+        <span>Show landcover</span>
+        <span className="theme-switch">
+          <input
+            type="checkbox"
+            name="includeLandcover"
+            checked={Boolean(form.includeLandcover)}
+            onChange={onChange}
+          />
+          <span className="theme-switch-track" aria-hidden="true" />
+        </span>
+      </label>
       <label className="toggle-field">
         <span>Show buildings</span>
         <span className="theme-switch">

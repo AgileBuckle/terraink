@@ -14,6 +14,7 @@ export interface ThemeRoadColors {
 
 export interface ThemeMapColors {
   land: string;
+  landcover: string;
   water: string;
   waterway: string;
   parks: string;
@@ -37,6 +38,7 @@ export type ThemeColorKey =
   | "ui.bg"
   | "ui.text"
   | "map.land"
+  | "map.landcover"
   | "map.water"
   | "map.waterway"
   | "map.parks"
@@ -61,6 +63,7 @@ export const DISPLAY_PALETTE_KEYS: ThemeColorKey[] = [
   "ui.bg",
   "ui.text",
   "map.land",
+  "map.landcover",
   "map.water",
   "map.waterway",
   "map.parks",
@@ -79,6 +82,7 @@ export const PALETTE_COLOR_LABELS: Record<ThemeColorKey, string> = {
   "ui.bg": "Overlay",
   "ui.text": "Text",
   "map.land": "Land",
+  "map.landcover": "Landcover",
   "map.water": "Water",
   "map.waterway": "Waterways",
   "map.parks": "Parks",
