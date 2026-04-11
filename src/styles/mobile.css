@@ -890,9 +890,9 @@
   .general-header .desktop-brand-kicker {
     margin: 0;
     font-family: "Spline Sans Mono", monospace;
-    font-size: 0.56rem;
+    font-size: 0.48rem;
     text-transform: uppercase;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.06em;
     color: rgba(184, 212, 232, 0.66);
   }
 
@@ -905,6 +905,29 @@
   }
 
   .desktop-header-social {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .desktop-header-social .general-header-social-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(146, 176, 200, 0.2);
+    border-radius: 9px;
+    background: rgba(10, 20, 31, 0.78);
+    color: rgba(195, 220, 240, 0.86);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .desktop-header-social .general-header-social-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .desktop-header-social .general-header-social-btn--github {
     display: none;
   }
 
