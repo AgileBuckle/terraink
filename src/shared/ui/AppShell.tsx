@@ -19,8 +19,7 @@ const SettingsPanel = lazy(() => import("@/features/poster/ui/SettingsPanel"));
 const AnnouncementModal = lazy(
   () => import("@/features/updates/ui/AnnouncementModal"),
 );
-const DesktopExportFab = lazy(() => import("@/features/export/ui/DesktopExportFab"));
-const MobileExportFab = lazy(() => import("@/features/export/ui/MobileExportFab"));
+const ExportFab = lazy(() => import("@/features/export/ui/ExportFab"));
 const DesktopLocationBar = lazy(() => import("@/shared/ui/DesktopLocationBar"));
 
 function SettingsDrawer({
@@ -86,8 +85,7 @@ export default function AppShell() {
     const preload = () => {
       void import("@/features/poster/ui/SettingsPanel");
       void import("@/shared/ui/DesktopLocationBar");
-      void import("@/features/export/ui/DesktopExportFab");
-      void import("@/features/export/ui/MobileExportFab");
+      void import("@/features/export/ui/ExportFab");
       void import("@/features/updates/ui/AnnouncementModal");
     };
 
@@ -280,7 +278,7 @@ export default function AppShell() {
         onTabChange={handleMobileTabChange}
       />
       <Suspense fallback={null}>
-        {isMobileViewport ? <MobileExportFab /> : <DesktopExportFab />}
+        <ExportFab isMobile={isMobileViewport} />
       </Suspense>
 
       <FooterNote />

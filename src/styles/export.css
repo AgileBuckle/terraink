@@ -1,0 +1,228 @@
+/* ══════════════════════════════════════════════════════════════
+   Export modal — shared across mobile and desktop
+   ═══════════════════════════════════════════════════════════════ */
+
+.export-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  background: rgba(0, 0, 0, 0.56);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.export-modal {
+  width: min(100%, 360px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(9, 18, 27, 0.98);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.48);
+  padding: 12px;
+}
+
+.export-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.export-modal-header h3 {
+  margin: 0;
+  font-family: "Spline Sans Mono", monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(214, 234, 247, 0.92);
+}
+
+.export-modal-close {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(17, 33, 47, 0.7);
+  color: rgba(197, 224, 241, 0.84);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.export-modal-close svg {
+  width: 14px;
+  height: 14px;
+}
+
+.export-modal-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.export-modal-support-label {
+  margin: 14px 0 8px;
+  text-align: center;
+  font-family: "Spline Sans Mono", monospace;
+  font-size: 0.84rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(206, 230, 246, 0.86);
+}
+
+.export-modal-option {
+  min-height: 50px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-family: "Spline Sans Mono", monospace;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.export-modal-option:disabled {
+  opacity: 0.6;
+}
+
+.export-modal-option--png {
+  background: rgba(231, 242, 250, 0.96);
+  border-color: rgba(165, 198, 221, 0.34);
+  color: #0d1f2e;
+}
+
+.export-modal-option--pdf {
+  background: rgba(48, 22, 8, 0.92);
+  border-color: rgba(255, 142, 94, 0.36);
+  color: #ffc6aa;
+}
+
+.export-modal-option--svg {
+  background: linear-gradient(
+    135deg,
+    rgba(42, 126, 79, 0.96),
+    rgba(29, 103, 64, 0.96)
+  );
+  border-color: rgba(120, 221, 161, 0.56);
+  color: #effff5;
+}
+
+.export-modal-option-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.export-modal-option-icon.is-spinning {
+  animation: export-modal-spin 0.9s linear infinite;
+}
+
+@keyframes export-modal-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Social links inside export modal ── */
+
+.mobile-export-social-links {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.mobile-export-social-links .general-header-social-btn {
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgba(146, 176, 200, 0.2);
+  border-radius: 9px;
+  background: rgba(10, 20, 31, 0.78);
+  color: rgba(195, 220, 240, 0.86);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.mobile-export-social-links .general-header-social-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mobile-export-social-links .general-header-social-btn--github {
+  width: auto;
+  min-width: 126px;
+  padding: 0 14px;
+  gap: 8px;
+}
+
+.mobile-export-social-links .general-header-github-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Spline Sans Mono", monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.mobile-export-social-links .general-header-github-stars svg {
+  width: 13px;
+  height: 13px;
+}
+
+.mobile-export-social-links .general-header-github-stars-count {
+  transform: translateY(2px);
+}
+
+/* ── Desktop trigger button ── */
+
+.export-fab-trigger-desktop {
+  position: fixed;
+  right: 18px;
+  bottom: 52px;
+  z-index: 101;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(165, 198, 221, 0.34);
+  border-radius: 14px;
+  background: rgba(231, 242, 250, 0.96);
+  color: #0d1f2e;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.26);
+  font-family: "Spline Sans Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.export-fab-trigger-desktop:hover {
+  background: rgba(241, 248, 253, 1);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.45),
+    0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.export-fab-trigger-desktop svg {
+  width: 16px;
+  height: 16px;
+}

@@ -836,9 +836,12 @@
   }
 
   .mobile-location-row-wrap,
-  .mobile-export-fab-trigger,
-  .mobile-export-modal-backdrop {
+  .mobile-export-fab-trigger {
     display: none !important;
+  }
+
+  .export-fab-trigger-desktop {
+    display: inline-flex;
   }
 
   .app-footer {
