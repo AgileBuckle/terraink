@@ -10,7 +10,7 @@ import { ensureGoogleFont } from "@/core/services";
 import {
   createPngBlob,
   createPdfBlobFromCanvas,
-  createLayeredSvgBlobFromMap,
+  createVectorSvgBlobFromMap,
   createPosterFilename,
   triggerDownloadBlob,
 } from "@/core/services";
@@ -109,7 +109,7 @@ export function useExport() {
         const lon = Number(form.longitude) || 0;
 
         if (format === "svg") {
-          const svgBlob = await createLayeredSvgBlobFromMap({
+          const svgBlob = await createVectorSvgBlobFromMap({
             map,
             exportWidth: size.width,
             exportHeight: size.height,
